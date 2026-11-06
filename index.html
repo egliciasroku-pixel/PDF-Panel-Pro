@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="fr" id="htmlRoot" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="docTitle">CREDITS PANEL PRO</title>
+<style>
+*{ box-sizing:border-box; margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; border:none !important; } 
+:root{ --bg:#030607; --panel:#081012; --panel2:#0d1719; --panel3:#111d20; --line:#1d2c2f; --lime:#a8ff00; --lime2:#c4ff52; --text:#f4f7f5; --muted:#91a19f; --danger:#ff5b67; --blue:#55b8ff; --orange:#ffb84d; --green:#37e39a; --shadow:0 15px 40px rgba(0,0,0,.4); } 
+body{ background: radial-gradient(circle at 10% 0%,rgba(168,255,0,.05),transparent 25%), radial-gradient(circle at 90% 100%,rgba(0,255,180,.03),transparent 30%), var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; font-size:11.5px; } 
+
+/* AUTH OVERLAY */
+.auth-overlay{ position:fixed; inset:0; background:rgba(3,6,7,0.96); backdrop-filter:blur(15px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:15px; }
+.auth-box{ width:100%; max-width:420px; background:linear-gradient(145deg,#0a1416,#071012); border-radius:16px; padding:25px; box-shadow:0 20px 60px rgba(0,0,0,0.8); text-align:center; }
+.auth-box h2{ color:var(--lime); font-size:18px; margin-bottom:8px; font-weight:900; }
+.auth-box p{ color:var(--muted); font-size:10.5px; margin-bottom:20px; }
+.auth-input{ width:100%; background:#071012; color:var(--lime); padding:12px; border-radius:10px; font-size:12px; font-family:monospace; margin-bottom:15px; outline:none; text-align:center; }
+.auth-btn{ background:var(--lime) !important; color:#000 !important; width:100%; padding:12px; border-radius:10px; font-weight:900; font-size:12px; cursor:pointer; transition:0.3s; }
+.auth-btn:hover{ opacity:0.9; box-shadow:0 0 15px rgba(168,255,0,0.4); }
+
+.app{ display:flex; min-height:100vh; position:relative; width: 100%; max-width: 100vw; } 
+
+.sidebar{ width:230px; min-width:230px; background:rgba(5,10,11,.98); padding:12px 10px; display:flex; flex-direction:column; position:fixed; top:0; bottom:0; left:0; z-index:1000; transition:transform 0.3s ease; } 
+html[dir="rtl"] .sidebar { left:auto; right:0; }
+
+.brand{ display:flex; align-items:center; gap:8px; padding:4px 4px 14px; } 
+.logo{ width:32px; height:32px; border-radius:100% !important; display:flex; align-items:center; justify-content:center; background:var(--lime); color:#050807; font-size:16px; font-weight:900; box-shadow:0 0 15px rgba(168,255,0,.2); overflow:hidden; } 
+.logo img{ width:100%; height:100%; object-fit:cover; border-radius:100% !important; }
+.brand-text{ font-weight:900; letter-spacing:.5px; font-size:12px; } 
+.brand-text span{ display:block; color:var(--lime); font-size:8.5px; margin-top:2px; letter-spacing:1px; } 
+.admin-box{ margin:10px 2px; padding:8px 10px; background:linear-gradient(135deg,#101b1d,#081012); border-radius:10px; display:flex; align-items:center; gap:8px; }
+.admin-info { flex: 1; overflow: hidden; }
+.admin-info small{ color:var(--muted); display:block; font-size:7.5px; margin-bottom:1px; } 
+.admin-info strong{ font-size:10.5px; display:block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--lime); } 
+
+.status-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--lime); box-shadow:0 0 8px var(--lime); margin-right:4px; } 
+html[dir="rtl"] .status-dot { margin-right:0; margin-left:4px; }
+
+.nav{ display:flex; flex-direction:column; gap:4px; overflow-y:auto; max-height:calc(100vh - 190px); padding-right:2px; } 
+html[dir="rtl"] .nav { padding-right:0; padding-left:2px; }
+.nav::-webkit-scrollbar{ width:3px; }
+.nav::-webkit-scrollbar-thumb{ background:var(--line); border-radius:3px; }
+.nav-item{ width:100%; background:transparent; color:var(--muted); display:flex; align-items:center; gap:9px; padding:9px 8px; border-radius:9px; cursor:pointer; text-align:left; transition:.2s; position:relative; } 
+html[dir="rtl"] .nav-item { text-align:right; }
+.nav-item:hover{ color:var(--text); background:#10191b; } 
+.nav-item.active{ background:linear-gradient(90deg,rgba(168,255,0,.15),rgba(168,255,0,.03)); color:var(--lime); } 
+.nav-icon{ width:28px; height:28px; min-width:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; background:#101a1c; transition:.2s; } 
+.nav-item.active .nav-icon{ background:rgba(168,255,0,.12); color:var(--lime); } 
+.nav-icon svg{ width:15px; height:15px; } 
+@keyframes iconSpin{ 0%{transform:rotate(0deg) scale(1)} 50%{transform:rotate(180deg) scale(1.1)} 100%{transform:rotate(360deg) scale(1)} } 
+.nav-item.icon-spin .nav-icon{ animation:iconSpin .5s ease; } 
+.nav-label{ display:flex; flex-direction:column; line-height:1.1; } 
+.nav-fr{ font-size:11.5px; font-weight:800; } 
+.sidebar-bottom{ margin-top:auto; padding-top:8px; color:var(--muted); font-size:8.5px; text-align:center; } 
+
+.main{ margin-left:230px; width:calc(100% - 230px); min-height:100vh; transition:all 0.3s ease; overflow-x: hidden; } 
+html[dir="rtl"] .main { margin-left:0; margin-right:230px; }
+
+.topbar{ height:60px; background:rgba(5,10,11,.9); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 15px; position:sticky; top:0; z-index:500; width: 100%; } 
+.top-left{ display:flex; align-items:center; gap:10px; } 
+.menu-btn{ display:none; background:var(--panel); color:var(--lime); width:34px; height:34px; border-radius:8px; cursor:pointer; font-size:16px; align-items:center; justify-content:center; } 
+.page-title h1{ font-size:16px; } 
+.page-title p{ color:var(--muted); font-size:9.5px; margin-top:2px; } 
+.top-right{ display:flex; align-items:center; gap:8px; } 
+.live-clock{ background:var(--panel); padding:6px 9px; border-radius:9px; color:var(--lime); font-size:10.5px; font-weight:bold; } 
+
+/* ======================================================== */
+/*  مؤشر ONLINE الجديد الاحترافي والراقي (Live Pulse Badge)  */
+/* ======================================================== */
+@keyframes onlinePulseGlow {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(55, 227, 154, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(55, 227, 154, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(55, 227, 154, 0); }
+}
+
+.online-lux-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(55, 227, 154, 0.12), rgba(5, 10, 11, 0.8));
+  border: 1px solid rgba(55, 227, 154, 0.35);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 9.5px;
+  font-weight: 900;
+  color: var(--green);
+  letter-spacing: 0.8px;
+  box-shadow: 0 4px 15px rgba(55, 227, 154, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+.online-pulse-circle {
+  width: 8px;
+  height: 8px;
+  background-color: var(--green);
+  border-radius: 50%;
+  animation: onlinePulseGlow 2s infinite ease-in-out;
+  box-shadow: 0 0 8px var(--green);
+}
+
+/* أزرار سريعة فاخرة في التوب بار (العملات واللغات) */
+.topbar-quick-btn { background: rgba(168,255,0,0.1); border: 1px solid rgba(168,255,0,0.3); color: var(--lime2); padding: 6px 10px; border-radius: 9px; font-size: 10.5px; font-weight: 900; display: flex; align-items: center; gap: 5px; cursor: pointer; transition: 0.2s; }
+.topbar-quick-btn:hover { background: rgba(168,255,0,0.2); box-shadow: 0 0 10px rgba(168,255,0,0.3); }
+
+.page{ display:none; padding:15px; animation:pageIn .25s ease; width: 100%; } 
+.page.active{ display:block; } 
+@keyframes pageIn{ from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} } 
+.section-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:14px; flex-wrap:wrap; } 
+.section-head h2{ font-size:16px; } 
+.section-head p{ color:var(--muted); font-size:10.5px; margin-top:2px; } 
+
+.btn { position: relative; background: rgba(255, 255, 255, 0.04) !important; backdrop-filter: blur(8px); color: var(--text); border-radius: 9px; padding: 8px 12px; font-weight: 800; font-size: 10.5px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+.btn-lime { background: rgba(168, 255, 0, 0.1) !important; color: var(--lime2) !important; }
+.btn-dark { background: rgba(20, 30, 33, 0.5) !important; color: var(--text) !important; }
+.btn-danger { background: rgba(255, 91, 103, 0.1) !important; color: var(--danger) !important; }
+.btn-blue { background: rgba(85, 184, 255, 0.1) !important; color: var(--blue) !important; }
+.btn-small { padding: 5px 7px; font-size: 9.5px; border-radius: 7px; }
+
+.btn-reset-catalog { background: linear-gradient(135deg, rgba(85, 184, 255, 0.12), rgba(168, 255, 0, 0.08)) !important; color: var(--lime2) !important; padding: 7px 12px; border-radius: 9px; font-weight: 900; font-size: 10px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.btn-reset-catalog svg { width: 13px; height: 13px; }
+
+.settings-action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; width: 100%; }
+.lux-setting-card { background: linear-gradient(145deg, #0d1719, #081113); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; border: 1px solid rgba(168,255,0,0.08) !important; transition: 0.3s; cursor: pointer; position: relative; overflow: hidden; }
+.lux-setting-card:hover { transform: translateY(-3px); border-color: rgba(168,255,0,0.3) !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.lux-setting-card.danger-card { border-color: rgba(255,91,103,0.2) !important; }
+.lux-setting-card.danger-card:hover { border-color: rgba(255,91,103,0.5) !important; box-shadow: 0 10px 30px rgba(255,91,103,0.15); }
+.lux-card-top { display: flex; align-items: center; gap: 10px; }
+.lux-card-icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(168,255,0,0.1); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--lime); }
+.danger-card .lux-card-icon { background: rgba(255,91,103,0.1); color: var(--danger); }
+.lux-card-title { font-size: 12px; font-weight: 900; color: var(--text); }
+.lux-card-sub { font-size: 9.5px; color: var(--muted); line-height: 1.3; }
+
+.currency-selector-grid, .lang-selector-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 10px; }
+.currency-card, .lang-card { background: linear-gradient(145deg, #081214, #050b0c); border: 1px solid rgba(168,255,0,0.08); border-radius: 11px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.25s; }
+.currency-card:hover, .lang-card:hover { background: #0d1719; border-color: rgba(168,255,0,0.25); transform: translateY(-1px); }
+.currency-card.active, .lang-card.active { background: linear-gradient(145deg, #0d1719, #081214); border-color: var(--lime); box-shadow: 0 0 15px rgba(168,255,0,0.12); }
+.currency-info-wrap, .lang-info-wrap { display: flex; align-items: center; gap: 10px; }
+.currency-flag-badge, .lang-flag-badge { width: 32px; height: 32px; border-radius: 8px; background: rgba(168,255,0,0.08); color: var(--lime); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 11px; }
+.currency-name-main, .lang-name-main { font-size: 11.5px; font-weight: 900; color: var(--text); display: flex; align-items: center; gap: 6px; }
+.currency-name-main span, .lang-name-main span { color: var(--lime2); font-size: 10px; font-weight: bold; background: rgba(168,255,0,0.08); padding: 1px 6px; border-radius: 5px; }
+.currency-name-sub, .lang-name-sub { font-size: 9px; color: var(--muted); margin-top: 2px; }
+.currency-radio-dot, .lang-radio-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--muted); display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.currency-card.active .currency-radio-dot, .lang-card.active .lang-radio-dot { border-color: var(--lime); background: rgba(168,255,0,0.15); }
+.currency-card.active .currency-radio-dot::after, .lang-card.active .lang-radio-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 8px var(--lime); }
+
+.multi-device-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; max-height: 520px; overflow-y: auto; padding: 4px; direction: ltr; }
+.device-select-card { background: var(--bg); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.device-select-card.selected { background: linear-gradient(145deg, #071012, #04090a); }
+.device-select-card img { width: 60px; height: 60px; object-fit: contain; background: #ffffff; border-radius: 8px; padding: 4px; cursor: pointer; }
+.device-select-card .dev-title { font-size: 10px; font-weight: 900; color: var(--text); text-align: center; height: 26px; overflow: hidden; cursor: pointer; }
+.device-qty-row { display: flex; align-items: center; justify-content: space-between; width: 100%; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 7px; }
+.qty-btn { background: var(--panel3); color: var(--lime); width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
+.qty-display { font-size: 11px; font-weight: 900; color: var(--lime2); }
+.device-price-row { display: flex; align-items: center; justify-content: space-between; width: 100%; background: rgba(8, 23, 25, 0.8); padding: 4px 8px; border-radius: 7px; }
+.device-card-price-input { background: #0d1719 !important; color: var(--lime) !important; font-size: 10.5px !important; font-weight: 900 !important; width: 65px !important; padding: 4px 6px !important; text-align: right; outline: none !important; }
+
+.single-device-card { background: linear-gradient(145deg, #0b1517, #071012); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px; max-width: 700px; margin: 0 auto; }
+.single-device-controls { display: grid; grid-template-columns: 1fr; gap: 10px; background: rgba(5, 11, 12, 0.85); padding: 10px; border-radius: 10px; }
+.device-input-group { display: flex; flex-direction: column; gap: 4px; }
+.device-input-group label { font-size: 9px; color: var(--muted); font-weight: bold; }
+.device-select-styled, .device-num-input { background: #0d1719 !important; color: var(--lime2) !important; border-radius: 8px !important; padding: 8px 10px !important; font-size: 11px !important; outline: none; width: 100%; }
+.single-device-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 8px; }
+.total-badge-container small { color: var(--muted); font-size: 8.5px; display: block; }
+.total-badge-container span { color: var(--lime); font-size: 15px; font-weight: 900; }
+
+.stats{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-bottom:14px; width: 100%; } 
+.stat{ background:linear-gradient(145deg,#0b1517,#071012); border-radius:12px; padding:12px; position:relative; overflow:hidden; } 
+.stat-top{ display:flex; justify-content:space-between; align-items:center; } 
+.stat-icon{ width:28px; height:28px; border-radius:8px; background:#111c1e; display:flex; align-items:center; justify-content:center; color:var(--lime); font-size:12px; } 
+.stat-label{ color:var(--muted); font-size:9.5px; } 
+.stat-value{ font-size:16px; font-weight:900; margin-top:8px; } 
+.stat-sub{ color:var(--muted); font-size:8.5px; margin-top:2px; } 
+
+.card{ background:linear-gradient(145deg,#0a1416,#071012); border-radius:12px; box-shadow:var(--shadow); margin-bottom:14px; width: 100%; overflow: hidden; } 
+.card-head{ padding:12px 14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; } 
+.card-head h3{ font-size:12px; } 
+.card-body{ padding:12px; width: 100%; } 
+
+.table-wrap{ overflow-x:auto; width:100%; } 
+table{ width:100%; border-collapse:collapse; min-width:100%; } 
+th{ color:var(--muted); font-size:9px; text-transform:uppercase; text-align:left; padding:8px; } 
+html[dir="rtl"] th { text-align:right; }
+td{ padding:9px 8px; font-size:11.5px; vertical-align:middle; text-align:left; } 
+html[dir="rtl"] td { text-align:right; }
+
+.avatar{ width:26px; height:26px; border-radius:100% !important; display:inline-flex; align-items:center; justify-content:center; background:rgba(168,255,0,.1); color:var(--lime); font-weight:900; margin-right:6px; overflow:hidden; font-size:10px; } 
+html[dir="rtl"] .avatar { margin-right:0; margin-left:6px; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 100% !important; }
+.client-cell{ display:flex; align-items:center; } 
+.badge{ display:inline-flex; padding:3px 6px; border-radius:6px; font-size:9px; font-weight:800; } 
+.badge-green{ color:var(--green); background:rgba(55,227,154,.08); } 
+.badge-lime{ color:var(--lime); background:rgba(168,255,0,.08); } 
+.badge-orange{ color:var(--orange); background:rgba(255,184,77,.08); } 
+.badge-blue{ color:var(--blue); background:rgba(85,184,255,.08); } 
+.badge-danger{ color:var(--danger); background:rgba(255,91,103,.1); }
+.actions{ display:flex; gap:3px; flex-wrap:wrap; } 
+
+.search{ width:100%; background:#081113; color:white; outline:none; border-radius:9px; padding:9px; font-size:11px; } 
+.search-row{ display:flex; gap:6px; margin-bottom:10px; width: 100%; } 
+.form-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; width: 100%; } 
+.form-group{ display:flex; flex-direction:column; gap:4px; } 
+.form-group.full{ grid-column:1/-1; } 
+.form-group label{ font-size:10px; color:var(--muted); } 
+.input, select, textarea{ width:100%; background:#071012; color:white; outline:none; border-radius:9px; padding:9px; font-size:11px; } 
+textarea{ min-height:70px; resize:vertical; } 
+
+.custom-select-wrapper { position: relative; width: 100%; }
+.custom-select-trigger { background: #071012; border-radius: 9px; padding: 8px 10px; font-size: 11px; color: var(--lime2); font-weight: 800; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+.custom-select-trigger span { display: flex; align-items: center; gap: 8px; }
+.custom-select-trigger img { width: 26px; height: 26px; object-fit: contain; border-radius: 100% !important; background: #fff; padding: 1px; }
+.custom-options { position: absolute; top: 100%; left: 0; right: 0; background: #081214; border-radius: 9px; margin-top: 4px; display: none; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.8); overflow: hidden; }
+.custom-options.open { display: block; }
+.custom-option { padding: 8px 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #f4f7f5; font-size: 11.5px; font-weight: 800; background: #081214 !important; }
+.custom-option:hover { background: rgba(168,255,0,0.12) !important; color: var(--lime); }
+.custom-option img { width: 28px; height: 28px; object-fit: contain; border-radius: 100% !important; background: #fff; padding: 1px; }
+
+.dashboard-grid{ display:grid; grid-template-columns:1fr; gap:14px; width: 100%; } 
+@media(min-width:1024px){ .dashboard-grid{ grid-template-columns:1.4fr .8fr; } }
+.quick-actions{ display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:6px; width: 100%; } 
+.quick{ padding:10px; border-radius:10px; background:rgba(13, 24, 26, 0.4) !important; cursor:pointer; color:white; text-align:left; transition:.2s; width:100%; } 
+html[dir="rtl"] .quick { text-align:right; }
+.quick:hover{ background:rgba(168,255,0,.06) !important; transform:translateY(-2px); } 
+.quick-icon{ color:var(--lime); margin-bottom:6px; font-size:15px; } 
+.quick strong{ display:block; font-size:11px; } 
+.quick span{ display:block; color:var(--muted); font-size:9px; margin-top:2px; } 
+
+.m3u-box, .xtream-box { background:rgba(13,23,25,0.6); border-radius:11px; padding:10px; margin-bottom:10px; width: 100%; }
+.m3u-title, .xtream-title { font-weight:800; font-size:11px; margin-bottom:5px; display:flex; align-items:center; gap:5px; color:var(--lime); }
+.m3u-status { font-size:10px; color:var(--muted); margin-top:4px; }
+.m3u-success { color: var(--green); }
+.m3u-warning { color: var(--orange); }
+.m3u-error { color: var(--danger); }
+
+.history-item{ display:flex; gap:8px; padding:7px 0; font-size:11px; width: 100%; }
+.history-dot{ width:20px; height:20px; min-width:20px; border-radius:50%; background:rgba(168,255,0,0.08); color:var(--lime); display:flex; align-items:center; justify-content:center; font-size:9.5px; font-weight:bold; }
+.history-info strong{ display:block; margin-bottom:1px; }
+.history-info span{ color:var(--muted); font-size:9px; }
+
+.modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(6px); z-index:3000; align-items:center; justify-content:center; padding:8px; } 
+.modal.show{ display:flex; } 
+.modal-box{ width:100%; max-width:400px; max-height:92vh; overflow-y:auto; background:#091214; border-radius:12px; } 
+.modal-head{ padding:10px 12px; display:flex; justify-content:space-between; align-items:center; } 
+.modal-head h3{ font-size:12px; } 
+.close{ background:#111c1e; color:var(--muted); width:22px; height:22px; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; } 
+.modal-body{ padding:10px; } 
+.modal-foot{ padding:10px 12px; display:flex; justify-content:flex-end; gap:4px; } 
+
+.toast{ position:fixed; right:12px; bottom:12px; background:#101a1c; color:white; padding:10px 14px; border-radius:10px; font-size:11px; z-index:5000; transform:translateY(80px); opacity:0; transition:.25s; } 
+html[dir="rtl"] .toast { right:auto; left:12px; }
+.toast.show{ transform:translateY(0); opacity:1; } 
+.empty{ padding:25px 10px; text-align:center; color:var(--muted); font-size:11px; } 
+
+/* ======================================================== */
+/*  أنميشن زجاجي وثابت وفاخر للوجو الفاتورة (Glass Glow)   */
+/* ======================================================== */
+@keyframes glassGlowPulse {
+  0% {
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(37, 99, 235, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.8);
+    transform: scale(1.03);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.4);
+    transform: scale(1);
+  }
+}
+
+.sofiane-invoice { background: #ffffff; color: #1e3a8a; padding: 14px; border-radius: 12px; font-family: Arial, sans-serif; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15); width: 100%; max-width: 380px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+html[dir="rtl"] .sofiane-invoice { text-align: right; }
+
+.sofiane-top-section { display: flex; justify-content: space-between; align-items: flex-start; }
+.sofiane-logo-area { display: flex; align-items: center; gap: 8px; }
+
+.sofiane-brand-logo-img { 
+  width: 50px; 
+  height: 50px; 
+  object-fit: cover; 
+  border-radius: 100% !important; 
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: glassGlowPulse 4s infinite ease-in-out;
+  padding: 2px;
+}
+
+.sofiane-brand-main { font-size: 15px; font-weight: 900; color: #1e40af; line-height: 1.1; }
+.sofiane-brand-sub { font-size: 7.5px; color: #64748b; font-style: italic; font-weight: bold; }
+.sofiane-contacts-stack { display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
+html[dir="rtl"] .sofiane-contacts-stack { align-items: flex-start; }
+.sofiane-contact-pill { background: #2563eb; color: #fff; font-size: 7.5px; padding: 3px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px; }
+.whatsapp-glass-pill-top { background: rgba(37, 211, 102, 0.12); color: #0f172a; font-size: 8px; font-weight: 800; padding: 3px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 5px; }
+.whatsapp-mini-icon { width: 12px; height: 12px; object-fit: contain; }
+.sofiane-title-bar { background: #2563eb; color: #fff; text-align: center; padding: 6px; font-size: 11.5px; font-weight: 900; border-radius: 6px; margin: 4px 0; }
+.sofiane-meta-table { width: 100%; border-collapse: separate; border-spacing: 4px; margin-bottom: 4px; }
+.sofiane-meta-table td { background: #f8fafc; padding: 6px 8px; border-radius: 6px; font-size: 8.5px; color: #334155; text-align: left; }
+html[dir="rtl"] .sofiane-meta-table td { text-align: right; }
+.sofiane-meta-table td.label-cell { font-weight: bold; color: #1e40af; width: 22%; }
+.sofiane-meta-table td.val-cell { font-weight: 600; color: #0f172a; width: 28%; }
+.sofiane-table { width: 100% !important; border-collapse: collapse; background: #f8fafc; border-radius: 6px; overflow: hidden; margin-top: 2px; table-layout: fixed; }
+.sofiane-table th { background: #2563eb; color: #fff; font-size: 8px; padding: 6px 4px; text-align: center; text-transform: uppercase; }
+.sofiane-table td { padding: 6px 4px; font-size: 8.5px; text-align: center; color: #0f172a; word-break: break-word; vertical-align: top; }
+.sofiane-table th:nth-child(1), .sofiane-table td:nth-child(1) { width: 45%; text-align: left; padding-left: 6px; }
+html[dir="rtl"] .sofiane-table th:nth-child(1), html[dir="rtl"] .sofiane-table td:nth-child(1) { text-align: right; padding-left: 0; padding-right: 6px; }
+
+.invoice-app-cell { display: flex; align-items: flex-start; gap: 6px; text-align: left; width: 100%; margin-bottom: 6px; }
+html[dir="rtl"] .invoice-app-cell { text-align: right; }
+.invoice-images-group { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+
+/* اللوجو الشخصي يظل دائرياً */
+.invoice-app-logo { width: 32px; height: 32px; object-fit: cover; border-radius: 100% !important; background: #ffffff; padding: 2px; }
+
+/* صور المنتجات والأجهزة تظهر كاملة بمربعات مرتبة (ليست دائرية) */
+.invoice-product-image { width: 42px; height: 42px; object-fit: contain; background: #ffffff; border-radius: 6px; border: 1px solid #e2e8f0; padding: 2px; }
+
+/* التصميم الكلاسيكي الأصلي لصندوق المجاميع */
+.sofiane-summary-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 9.5px; color: #334155; }
+.sofiane-sum-row { display: flex; justify-content: space-between; align-items: center; color: #64748b; font-weight: 600; }
+.sofiane-sum-highlight { background: #fef08a !important; border: 1px solid #fde047; padding: 7px 10px; border-radius: 6px; color: #854d0e; font-weight: 900; font-size: 12px; }
+
+.sofiane-footer-container { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; margin-top: 4px; border-top: 1px dashed #e2e8f0; }
+.sofiane-thank-luxury { display: flex; flex-direction: column; justify-content: center; flex: 1; padding-right: 8px; }
+html[dir="rtl"] .sofiane-thank-luxury { padding-right: 0; padding-left: 8px; }
+.sofiane-thank-banner { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-left: 3px solid #2563eb; padding: 8px 10px; border-radius: 6px; }
+html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px solid #2563eb; }
+.sofiane-thank-title { font-weight: 900; color: #1e40af; font-size: 9px; text-transform: uppercase; margin-bottom: 2px; }
+.sofiane-right-signature-block { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.sofiane-sign-label-top { font-size: 7px; color: #1e40af; font-weight: 900; text-transform: uppercase; margin-bottom: 1px; text-align: center; }
+.sofiane-official-seal { width: 82px; height: 82px; border-radius: 100% !important; background: #f8fafc; display: flex; align-items: center; justify-content: center; position: relative; transform: rotate(-5deg); padding: 4px; }
+.seal-circle-inner { width: 100%; height: 100%; border-radius: 100% !important; display: flex; align-items: center; justify-content: center; position: relative; background: #ffffff; overflow: hidden; }
+.seal-center-img { width: 44px; height: 44px; object-fit: cover; border-radius: 100% !important; z-index: 1; position: absolute; opacity: 0.2; }
+.seal-signature-overlay { position: absolute; width: 76px; height: 30px; z-index: 4; transform: rotate(-6deg); }
+.seal-svg-text { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 2; }
+
+@media(max-width:768px){
+  .sidebar{ transform:translateX(-100%); }
+  html[dir="rtl"] .sidebar { transform:translateX(100%); }
+  .sidebar.open{ transform:translateX(0); }
+  .main{ margin-left:0 !important; margin-right:0 !important; width:100% !important; }
+  .menu-btn{ display:flex !important; }
+  .topbar{ padding:0 10px; }
+  .page{ padding:10px; }
+  .stats{ grid-template-columns: 1fr 1fr; }
+  .multi-device-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <h2 id="authTitleText">🔐 تفعيل لوحة الإدارة</h2>
+    <p id="authDescText">أدخل كود التفعيل الخاص بك للدخول واستمرار الصلاحية</p>
+    <input type="password" id="authPassword" class="auth-input" placeholder="أدخل كود التفعيل هنا (KEY_...)">
+    <button class="auth-btn" id="authBtnText" onclick="authenticateClient()">تفعيل ودخول ⚡</button>
+  </div>
+</div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo" id="brandLogoBox">🛍️</div>
+      <div class="brand-text" id="brandText">SOFIANE-SHOP<span>PANEL MANAGEMENT</span></div>
+    </div>
+    <div class="admin-box">
+      <div class="admin-info">
+        <small><span id="lblExp">Exp</span>: <span id="panelExpiryDateLabel" style="color:var(--lime);">--/--/----</span></small>
+        <strong><span class="status-dot"></span><span id="adminNameDisplay">Sofiane-shop</span></strong>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="nav-item active" data-page="dashboard">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></div>
+        <div class="nav-label"><span class="nav-fr" data-i18n="nav_dashboard">Dashboard</span></div>
+      </button>
+      <button class="nav-item" data-page="devices">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div>
+        <div class="nav-label"><span class="nav-fr" data-i18n="nav_devices">Appareils</span></div>
+      </button>
+      <button class="nav-item" data-page="clients">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+        <div class="nav-label"><span class="nav-fr" data-i18n="nav_clients">Clients</span></div>
+      </button>
+      <button class="nav-item" data-page="abonnements">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="13" x2="13" y2="13"></line></svg></div>
+        <div class="nav-label"><span class="nav-fr" data-i18n="nav_abonnements">Abonnements</span></div>
+      </button>
+      <button class="nav-item" data-page="payments">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path><path d="M6 15h4"></path></svg></div>
+        <div class="nav-label"><span class="nav-fr" data-i18n="nav_payments">Paiements</span></div>
+      </button>
+      <button class="nav-item" data-page="history">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path><path d="M12 7v5l3 2"></path></svg></div>
+        <div class="nav-label"><span class="nav-fr" data-i18n="nav_history">Historique</span></div>
+      </button>
+      <button class="nav-item" data-page="activation">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4L12 2z"></path></svg></div>
+        <div class="nav-label"><span class="nav-fr" data-i18n="nav_activation">Activation</span></div>
+      </button>
+      <button class="nav-item" data-page="settings">
+        <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5v.1h-2.6v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4.4v-2.6h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5v-.1h2.6v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l-.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v2.6h-.1a1.7 1.7 0 0 0-1.5 1 z"></path></svg></div>
+        <div class="nav-label"><span class="nav-fr" data-i18n="nav_settings">Paramètres</span></div>
+      </button>
+    </div>
+    <div class="sidebar-bottom" id="sidebarFooterBrand">SOFIANE-SHOP PANEL<br>Mode Direct</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div class="page-title">
+          <h1 id="topTitle">Dashboard</h1>
+          <p id="topSubtitle">Sofiane-shop • Toujours à votre service</p>
+        </div>
+      </div>
+      <div class="top-right">
+        <!-- زر اللغات السريع الفاخر -->
+        <button class="topbar-quick-btn" onclick="openLanguageModal()" title="Changer la langue">
+          <span>🌐</span> <span id="quickLangDisplay">FR</span>
+        </button>
+        <!-- زر العملات السريع العلوي -->
+        <button class="topbar-quick-btn" onclick="openCurrencyModal()" title="Changer la devise">
+          <span>💱</span> <span id="quickCurrencyDisplay">DH</span>
+        </button>
+        <div class="live-clock" id="liveClock">--:--:--</div>
+        <!-- مؤشر ONLINE الجديد الراقي والنابض بالحياة -->
+        <div class="online-lux-badge">
+          <span class="online-pulse-circle"></span>
+          <span>ONLINE</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="dashboard">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="dash_title">Dashboard</h2>
+          <p data-i18n="dash_sub">Vue générale de votre panel</p>
+        </div>
+        <button class="btn btn-lime" onclick="openClientModal()" data-i18n="btn_new_client"> ＋ Nouveau client </button>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-top"><span class="stat-label" data-i18n="stat_clients">Clients</span><div class="stat-icon">👥</div></div><div class="stat-value" id="statClients">0</div><div class="stat-sub" data-i18n="stat_sub_clients">Total clients</div></div>
+        <div class="stat"><div class="stat-top"><span class="stat-label" data-i18n="stat_due">À payer</span><div class="stat-icon">💰</div></div><div class="stat-value" id="statDue">0</div><div class="stat-sub" data-i18n="stat_sub_due">Total facturé</div></div>
+        <div class="stat"><div class="stat-top"><span class="stat-label" data-i18n="stat_paid">Payé</span><div class="stat-icon">💳</div></div><div class="stat-value" id="statPaid">0</div><div class="stat-sub" data-i18n="stat_sub_paid">Total reçu</div></div>
+        <div class="stat"><div class="stat-top"><span class="stat-label" data-i18n="stat_remain">Reste</span><div class="stat-icon">⚠</div></div><div class="stat-value" id="statRemain">0</div><div class="stat-sub" data-i18n="stat_sub_remain">Solde restant</div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-head">
+            <h3 data-i18n="card_recent_clients">Clients récents</h3>
+            <button class="btn btn-dark btn-small" onclick="showPage('clients')" data-i18n="btn_see_all">Voir tous</button>
+          </div>
+          <div class="table-wrap">
+            <table><thead><tr><th data-i18n="th_client">Client</th><th data-i18n="th_account">Compte</th><th data-i18n="th_status">État</th><th data-i18n="th_remain">Reste</th></tr></thead><tbody id="dashboardTable"></tbody></table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3 data-i18n="card_quick_actions">Actions rapides</h3></div>
+          <div class="card-body">
+            <div class="quick-actions">
+              <button class="quick" onclick="openClientModal()"><div class="quick-icon">👤＋</div><strong data-i18n="qa_new_client">Nouveau client</strong><span data-i18n="qa_new_client_sub">Ajouter un client</span></button>
+              <button class="quick" onclick="openPaymentModal()"><div class="quick-icon">💳</div><strong data-i18n="qa_new_payment">Nouveau paiement</strong><span data-i18n="qa_new_payment_sub">Enregistrer un paiement</span></button>
+              <button class="quick" onclick="showPage('activation')"><div class="quick-icon">⚡</div><strong data-i18n="qa_activation">Activation</strong><span data-i18n="qa_activation_sub">Activer une playlist</span></button>
+              <button class="quick" onclick="showPage('abonnements')"><div class="quick-icon">📡</div><strong data-i18n="qa_subscription">Abonnement</strong><span data-i18n="qa_subscription_sub">Nouveau abonnement</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEVICES PAGE -->
+    <div class="page" id="devices">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="dev_page_title">Appareils Électroniques</h2>
+          <p data-i18n="dev_page_sub">Catalogue des appareils avec gestion précise des prix et quantités</p>
+        </div>
+        <button class="btn-reset-catalog" onclick="resetCatalogData()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+          <span data-i18n="btn_reset_catalog">Réinitialiser / Nouveau</span>
+        </button>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3 data-i18n="dev_pos_title">Point de Vente & Prix Unitaires</h3>
+          <span class="badge badge-blue" data-i18n="dev_catalog_badge">Catalogue Interactif</span>
+        </div>
+        <div class="card-body">
+          <div class="single-device-card">
+            <div class="device-input-group full">
+              <label data-i18n="dev_select_label">Sélectionnez les appareils, quantités et définissez le prix unitaire :</label>
+              <div class="multi-device-grid" id="multiDeviceGrid"></div>
+            </div>
+
+            <div class="single-device-controls">
+              <div class="device-input-group" style="display:flex; flex-direction:row; gap:6px; align-items:flex-end;">
+                <div style="flex:1;">
+                  <label data-i18n="dev_select_client_label">Sélectionnez un client existant (ou laissez vide)</label>
+                  <select class="device-select-styled" id="unified_client_select" onchange="onUnifiedClientSelectChange()">
+                    <option value="" data-i18n="dev_no_client_opt">-- Nouveau Client / Sans nom --</option>
+                  </select>
+                </div>
+                <button class="btn btn-blue btn-small" style="height:35px;" onclick="openClientModalForQuickAdd()" data-i18n="btn_edit_add">✏️ تعديل / إضافة</button>
+              </div>
+
+              <div class="device-input-group">
+                <label data-i18n="dev_payment_method_label">Moyen de paiement</label>
+                <select class="device-select-styled" id="unified_payment_method" onchange="onPaymentMethodChange()">
+                  <option value="Espèces" data-i18n="opt_cash">Espèces</option>
+                  <option value="Virement" data-i18n="opt_transfer">Virement</option>
+                </select>
+              </div>
+
+              <div class="device-input-group" id="dynamic_payment_field_wrapper">
+                <label id="dynamic_field_label">Montant payé (Espèces)</label>
+                <input type="number" class="device-num-input" id="unified_dynamic_payment_detail" placeholder="Entrer le montant...">
+              </div>
+            </div>
+
+            <div class="single-device-footer">
+              <div class="total-badge-container">
+                <small data-i18n="lbl_general_total">Total Général :</small>
+                <span id="unified_total_display">0</span>
+              </div>
+              <button class="btn btn-lime" onclick="checkoutUnifiedDevice()" data-i18n="btn_emit_invoice">🧾 Émettre la facture</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTS PAGE -->
+    <div class="page" id="clients">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="cli_page_title">Clients</h2>
+          <p data-i18n="cli_page_sub">Gestion de vos clients</p>
+        </div>
+        <button class="btn btn-lime" onclick="openClientModal()" data-i18n="btn_new_client"> ＋ Nouveau client </button>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3 data-i18n="cli_list_title">Liste des clients</h3>
+          <span class="badge badge-lime" id="clientCountText">0 clients</span>
+        </div>
+        <div class="card-body">
+          <div class="search-row"><input class="search" id="clientSearch" placeholder="Rechercher nom / compte..."></div>
+          <div class="table-wrap">
+            <table><thead><tr><th data-i18n="th_client">Client</th><th data-i18n="th_account">Compte</th><th data-i18n="th_year">Année</th><th data-i18n="th_whatsapp">WhatsApp</th><th data-i18n="th_total">Total</th><th data-i18n="th_paid">Payé</th><th data-i18n="th_remain">Reste</th><th data-i18n="th_status">Statut</th><th data-i18n="th_actions">Actions</th></tr></thead><tbody id="clientsTable"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABONNEMENTS PAGE -->
+    <div class="page" id="abonnements">
+      <div class="section-head">
+        <div>
+          <h2 data-i18n="sub_page_title">Nouveau Abonnement</h2>
+          <p data-i18n="sub_page_sub">Gestion des abonnements Xtream / M3U</p>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-head"><h3 data-i18n="sub_xtream_info_title">📡 Informations Xtream</h3></div>
+        <div class="card-body">
+          <div class="m3u-box">
+            <div class="m3u-title">🔗 <span data-i18n="m3u_auto_title">M3U → XTREAM AUTOMATIQUE</span></div>
+            <input class="input" type="url" id="abonnementM3U" placeholder="http://server.com/get.php?username=USER&password=PASS&type=m3u_plus" oninput="autoConvertM3U(false)" onblur="autoConvertM3U(true)">
+            <div id="m3uStatus" class="m3u-status" data-i18n="m3u_status_hint">Collez le lien M3U : extraction auto des identifiants et de la validité.</div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full"><label data-i18n="lbl_client">Client</label><select id="abonnementClient" onchange="onAbonnementClientSelectChange()"><option value="" data-i18n="opt_select_client">Sélectionner un client</option></select></div>
+            <div class="form-group"><label data-i18n="lbl_client_name">Nom du client</label><input class="input" id="abonnementName" placeholder="Nom du client"></div>
+
+            <div class="form-group">
+              <label data-i18n="lbl_application">Application</label>
+              <div class="custom-select-wrapper" id="wrapper_abonnementApp">
+                <div class="custom-select-trigger" onclick="toggleCustomSelect('abonnementApp')">
+                  <span id="trigger_abonnementApp"><div class="none-icon">N</div> None</span>
+                  <span>▼</span>
+                </div>
+                <div class="custom-options" id="options_abonnementApp">
+                  <div class="custom-option" onclick="selectCustomOption('abonnementApp', 'None', '')"><div class="none-icon">N</div> None</div>
+                  <div class="custom-option" onclick="selectCustomOption('abonnementApp', 'Hot IPTV', 'https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp')"><img src="https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp"> Hot IPTV</div>
+                  <div class="custom-option" onclick="selectCustomOption('abonnementApp', 'Ibo pro', 'https://i.ibb.co/DfxxWqWr/logo-512.webp')"><img src="https://i.ibb.co/DfxxWqWr/logo-512.webp"> Ibo pro</div>
+                  <div class="custom-option" onclick="selectCustomOption('abonnementApp', 'Ultra VIP', 'https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg')"><img src="https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg"> Ultra VIP</div>
+                  <div class="custom-option" onclick="selectCustomOption('abonnementApp', 'Vergnia', 'https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp')"><img src="https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp"> Vergnia</div>
+                  <div class="custom-option" onclick="selectCustomOption('abonnementApp', 'Bob Player', 'https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp')"><img src="https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp"> Bob Player</div>
+                </div>
+                <input type="hidden" id="abonnementApp" value="None">
+              </div>
+            </div>
+
+            <div class="form-group full"><label data-i18n="lbl_xtream_url">🌐 Xtream Server / URL</label><input class="input" id="abonnementServer" placeholder="http://server.com:8080"></div>
+            <div class="form-group"><label data-i18n="lbl_username">👤 Username</label><input class="input" id="abonnementUsername" placeholder="Username"></div>
+            <div class="form-group"><label data-i18n="lbl_password">🔑 Password</label><input class="input" id="abonnementPassword" placeholder="Password" type="text"></div>
+            <div class="form-group"><label data-i18n="lbl_duration">📅 Durée</label><select id="abonnementDuration"><option value="1 mois" data-i18n="opt_1month">1 mois</option><option value="12 mois" data-i18n="opt_12months">12 mois</option><option value="Custom" data-i18n="opt_detected_link">Détecté du lien</option></select></div>
+            <div class="form-group"><label data-i18n="lbl_start_date">📆 Date début</label><input class="input" type="date" id="abonnementStart"></div>
+            <div class="form-group"><label data-i18n="lbl_expiry_date">⏳ Date d'expiration (Détectée)</label><input class="input" type="text" id="abonnementExpiryManual" placeholder="Ex: 06/11/2027"></div>
+            <div class="form-group"><label id="abonnementPriceLabel">Prix</label><input class="input" type="number" id="abonnementPrice" placeholder="0.00"></div>
+            <div class="form-group full"><label data-i18n="lbl_note">📝 Note / Remarque</label><textarea id="abonnementNote" placeholder="Remarque / Server / Détails"></textarea></div>
+            <div class="form-group full"><button class="btn btn-lime" onclick="createAbonnement()" data-i18n="btn_create_sub">📡＋ Créer l'abonnement</button></div>
+          </div>
+          <div class="result-box" id="abonnementResult" style="margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 data-i18n="sub_list_title">📡 Abonnements Xtream</h3><span class="badge badge-lime" id="abonnementCount">0</span></div>
+        <div class="table-wrap">
+          <table><thead><tr><th data-i18n="th_date">Date</th><th data-i18n="th_client">Client</th><th data-i18n="th_application">Application</th><th data-i18n="th_xtream">Xtream</th><th data-i18n="th_duration">Durée</th><th data-i18n="th_expiry">Expiration</th><th data-i18n="th_actions">Actions</th></tr></thead><tbody id="abonnementTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENTS PAGE -->
+    <div class="page" id="payments">
+      <div class="section-head"><div class="page-title"><h2 data-i18n="pay_page_title">Paiements</h2><p data-i18n="pay_page_sub">Suivi des paiements</p></div>
+        <button class="btn btn-lime" onclick="openPaymentModal()" data-i18n="btn_new_payment"> ＋ Nouveau paiement </button>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 data-i18n="pay_history_title">Historique des paiements</h3></div>
+        <div class="table-wrap">
+          <table><thead><tr><th data-i18n="th_date_time">Date & Heure</th><th data-i18n="th_client">Client</th><th data-i18n="th_app_note">App / Note</th><th data-i18n="th_amount">Montant</th><th data-i18n="th_note">Note</th><th data-i18n="th_actions">Actions</th></tr></thead><tbody id="paymentsTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY PAGE -->
+    <div class="page" id="history">
+      <div class="section-head"><div><h2 data-i18n="hist_page_title">Historique</h2><p data-i18n="hist_page_sub">Toutes les opérations</p></div></div>
+      <div class="card"><div class="card-head"><h3 data-i18n="hist_recent_title">Activité récente</h3></div><div class="card-body"><div class="history-list" id="historyList"></div></div></div>
+    </div>
+
+    <!-- ACTIVATION PAGE -->
+    <div class="page" id="activation">
+      <div class="section-head"><div><h2 data-i18n="act_page_title">Activation</h2><p data-i18n="act_page_sub">Activation Playlist</p></div></div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-head"><h3 data-i18n="act_new_title">Nouvelle activation</h3></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group full"><label data-i18n="lbl_client">Client</label><select id="activationClient" onchange="onActivationClientSelectChange()"><option value="" data-i18n="opt_select_client">Sélectionner un client</option></select></div>
+            <div class="form-group"><label data-i18n="lbl_client_name">Nom du client</label><input class="input" id="activationName" placeholder="Nom du client"></div>
+            <div class="form-group"><label data-i18n="lbl_whatsapp">WhatsApp</label><input class="input" id="activationPhone" placeholder="+212 6XXXXXXXX"></div>
+            <div class="form-group"><label data-i18n="lbl_mac">MAC Address</label><input class="input" id="activationMac" placeholder="00:11:22:33:44:55"></div>
+            
+            <div class="form-group">
+              <label data-i18n="lbl_application">Application</label>
+              <div class="custom-select-wrapper" id="wrapper_activationApp">
+                <div class="custom-select-trigger" onclick="toggleCustomSelect('activationApp')">
+                  <span id="trigger_activationApp"><div class="none-icon">N</div> None</span>
+                  <span>▼</span>
+                </div>
+                <div class="custom-options" id="options_activationApp">
+                  <div class="custom-option" onclick="selectCustomOption('activationApp', 'None', '')"><div class="none-icon">N</div> None</div>
+                  <div class="custom-option" onclick="selectCustomOption('activationApp', 'Hot IPTV', 'https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp')"><img src="https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp"> Hot IPTV</div>
+                  <div class="custom-option" onclick="selectCustomOption('activationApp', 'Ibo pro', 'https://i.ibb.co/DfxxWqWr/logo-512.webp')"><img src="https://i.ibb.co/DfxxWqWr/logo-512.webp"> Ibo pro</div>
+                  <div class="custom-option" onclick="selectCustomOption('activationApp', 'Ultra VIP', 'https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg')"><img src="https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg"> Ultra VIP</div>
+                  <div class="custom-option" onclick="selectCustomOption('activationApp', 'Vergnia', 'https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp')"><img src="https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp"> Vergnia</div>
+                  <div class="custom-option" onclick="selectCustomOption('activationApp', 'Bob Player', 'https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp')"><img src="https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp"> Bob Player</div>
+                </div>
+                <input type="hidden" id="activationApp" value="None">
+              </div>
+            </div>
+
+            <div class="form-group"><label data-i18n="lbl_duration">Durée</label><select id="activationDuration"><option value="12 mois">12 mois</option><option value="Lifetime">Lifetime</option></select></div>
+            <div class="form-group"><label data-i18n="lbl_start_date">📆 Date début</label><input class="input" type="date" id="activationStart"></div>
+            <div class="form-group"><label id="activationPriceLabel">Prix</label><input class="input" type="number" id="activationPrice" placeholder="0.00"></div>
+            <div class="form-group full"><label data-i18n="lbl_note">📝 Note / Remarque</label><input class="input" id="activationNote" placeholder="Note facultative"></div>
+            <div class="form-group full"><button class="btn btn-lime" onclick="createActivation()" data-i18n="btn_activate">⚡ Activer la playlist</button></div>
+          </div>
+          <div class="result-box" id="activationResult" style="margin-top:8px;"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3 data-i18n="act_list_title">Activations</h3><span class="badge badge-lime" id="activationCount">0</span></div>
+        <div class="table-wrap">
+          <table><thead><tr><th data-i18n="th_date_time">Date & Heure</th><th data-i18n="th_client">Client</th><th data-i18n="th_whatsapp">WhatsApp</th><th data-i18n="th_mac_app">MAC / App</th><th data-i18n="th_duration_expiry">Durée / Expiration</th><th data-i18n="th_status">Statut</th><th data-i18n="th_actions">Actions</th></tr></thead><tbody id="activationTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="settings">
+      <div class="section-head"><div><h2 data-i18n="set_page_title">Paramètres</h2><p data-i18n="set_page_sub">Configuration du panel, Devises & Sécurité</p></div></div>
+      
+      <div class="card">
+        <div class="card-head"><h3 data-i18n="set_security_title">إدارة النظام والأمان (System & Security)</h3></div>
+        <div class="card-body">
+          <div class="settings-action-grid">
+            <div class="lux-setting-card danger-card" onclick="openSuspendModal()">
+              <div class="lux-card-top">
+                <div class="lux-card-icon">🚫</div>
+                <div>
+                  <div class="lux-card-title" data-i18n="set_suspend_title">حظر وتوقيف أكواد العملاء</div>
+                  <div class="lux-card-sub" data-i18n="set_suspend_sub">إيقاف أي كود تفعيل فوراً ومنعه من الدخول</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lux-setting-card" onclick="openBackupManagerModal()">
+              <div class="lux-card-top">
+                <div class="lux-card-icon" style="color:var(--blue); background:rgba(85,184,255,0.1);">💾</div>
+                <div>
+                  <div class="lux-card-title" style="color:var(--blue);" data-i18n="set_backup_title">إدارة النسخ الاحتياطي (Backup & Restore)</div>
+                  <div class="lux-card-sub" data-i18n="set_backup_sub">تصدير أو استرجاع بيانات وشبكة البانل</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="handleFileImport(event)">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3 data-i18n="set_lang_title">Gestion de la Langue Active</h3><span class="badge badge-lime">Trilingue</span></div>
+        <div class="card-body">
+          <div style="display:flex; flex-direction:column; gap:10px; padding:6px 0;">
+            <p style="color:var(--muted); font-size:10.5px;" data-i18n="set_lang_desc">اختر لغة العرض المفضلة (Français, English, العربية):</p>
+            <button class="topbar-quick-btn" style="width:fit-content; padding:10px 16px; font-size:12px;" onclick="openLanguageModal()">
+              <span>🌐</span> <span>إدارة واختيار لغة النظام النشطة (<span id="settingsLangLabel">FR</span>)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3 data-i18n="set_currency_title">Gestion de la Devise Active</h3><span class="badge badge-lime">Devises Internationales</span></div>
+        <div class="card-body">
+          <div style="display:flex; flex-direction:column; gap:10px; padding:6px 0;">
+            <p style="color:var(--muted); font-size:10.5px;" data-i18n="set_currency_desc">انقر على الزر أدناه لفتح نافذة اختيار العملة السريعة وتعديل العملة المفضلة:</p>
+            <button class="topbar-quick-btn" style="width:fit-content; padding:10px 16px; font-size:12px;" onclick="openCurrencyModal()">
+              <span>💱</span> <span>إدارة واختيار العملة النشطة (<span id="settingsCurrencyLabel">DH</span>)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="modal" id="clientModal"><div class="modal-box"><div class="modal-head"><h3 id="clientModalTitle" data-i18n="modal_client_title">Nouveau client</h3><button class="close" onclick="closeModal('clientModal')">×</button></div><div class="modal-body"><input type="hidden" id="editClientId"><div class="form-grid"><div class="form-group full"><label data-i18n="lbl_name_surname">Nom / Prénom</label><input class="input" id="clientName" placeholder="Nom du client"></div><div class="form-group"><label data-i18n="lbl_whatsapp">WhatsApp</label><input class="input" id="clientPhone" placeholder="+212 6XXXXXXXX"></div><div class="form-group"><label data-i18n="lbl_year">Année</label><input class="input" id="clientYear" value="2026"></div><div class="form-group full"><label data-i18n="lbl_username_account">Username / Compte</label><input class="input" id="clientAccount" placeholder="Username"></div></div></div><div class="modal-foot"><button class="btn btn-dark" onclick="closeModal('clientModal')" data-i18n="btn_cancel">Annuler</button><button class="btn btn-danger" id="deleteClientModalBtn" onclick="deleteCurrentClient()" style="display:none" data-i18n="btn_delete">Supprimer</button><button class="btn btn-lime" onclick="saveClient()" data-i18n="btn_save">Enregistrer</button></div></div></div>
+
+<div class="modal" id="languageModal">
+  <div class="modal-box" style="max-width:380px;">
+    <div class="modal-head">
+      <h3>🌐 اختيار لغة النظام</h3>
+      <button class="close" onclick="closeModal('languageModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--muted); font-size:10px; margin-bottom:10px;">اختر اللغة المفضلة لتطبيقها فوراً على واجهة البانل:</p>
+      <div class="lang-selector-grid" id="modalLangSelectorGrid"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" style="width:100%;" onclick="closeModal('languageModal')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="currencyModal">
+  <div class="modal-box" style="max-width:380px;">
+    <div class="modal-head">
+      <h3>💱 اختيار العملة السريعة</h3>
+      <button class="close" onclick="closeModal('currencyModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--muted); font-size:10px; margin-bottom:10px;">اختر العملة المفضلة للتعامل بها وتحديث الأسعار فوراً في الفاتورة:</p>
+      <div class="currency-selector-grid" id="modalCurrencySelectorGrid"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" style="width:100%;" onclick="closeModal('currencyModal')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="suspendModal">
+  <div class="modal-box" style="max-width:450px;">
+    <div class="modal-head">
+      <h3 style="color:var(--danger);">🚫 إدارة حظر الأكواد والعملاء</h3>
+      <button class="close" onclick="closeModal('suspendModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--muted); font-size:10px; margin-bottom:12px;">
+        أدخل كود التفعيل المراد حظره. عند إدخاله والضغط على زر الحظر، سيتوقف العميل عن العمل في الحال ولن يتمكن من الدخول حتى لو كانت صلاحيته نشطة.
+      </p>
+      <div class="form-grid" style="margin-bottom:14px;">
+        <div class="form-group full" style="display:flex; flex-direction:row; gap:6px;">
+          <input type="text" id="suspendCodeInput" class="input" placeholder="أدخل كود التفعيل هنا (KEY_...)" style="flex:1;">
+          <button class="btn btn-danger" onclick="suspendClientCode()" style="padding:0 15px;">حظر 🚫</button>
+        </div>
+      </div>
+      
+      <div>
+        <h4 style="font-size:11px; color:var(--lime2); margin-bottom:8px;">الأكواد المحظورة حالياً :</h4>
+        <div class="table-wrap" style="max-height:220px; overflow-y:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>الكود</th>
+                <th>التاريخ</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="suspendedCodesTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" onclick="closeModal('suspendModal')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="backupManagerModal">
+  <div class="modal-box" style="max-width:380px; text-align:center;">
+    <div class="modal-head">
+      <h3>💾 إدارة النسخ الاحتياطي للبيانات</h3>
+      <button class="close" onclick="closeModal('backupManagerModal')">×</button>
+    </div>
+    <div class="modal-body" style="display:flex; flex-direction:column; gap:12px; padding:15px;">
+      <p style="color:var(--muted); font-size:10.5px;">اختر العملية المطلوبة للتعامل مع قاعدة بيانات البانل الخاصة بك بأمان تام:</p>
+      
+      <button class="btn btn-lime" style="width:100%; padding:12px; font-size:11.5px;" onclick="exportData()">
+        📥 تصدير النسخة الاحتياطية (Export JSON)
+      </button>
+
+      <button class="btn btn-blue" style="width:100%; padding:12px; font-size:11.5px;" onclick="document.getElementById('importFile').click(); closeModal('backupManagerModal');">
+        📤 استيراد واسترجاع البيانات (Import JSON)
+      </button>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" style="width:100%;" onclick="closeModal('backupManagerModal')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="debtModal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 data-i18n="modal_add_amount">Ajouter montant</h3><button class="close" onclick="closeModal('debtModal')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="debtClientId">
+      <div class="form-grid">
+        <div class="form-group"><label id="debtAmountLabel">Montant</label><input class="input" type="number" min="0" step="0.01" id="debtAmount" placeholder="0.00"></div>
+        <div class="form-group full">
+          <label data-i18n="lbl_application">Application</label>
+          <div class="custom-select-wrapper" id="wrapper_debtProduct">
+            <div class="custom-select-trigger" onclick="toggleCustomSelect('debtProduct')"><span id="trigger_debtProduct"><div class="none-icon">N</div> None</span><span>▼</span></div>
+            <div class="custom-options" id="options_debtProduct">
+              <div class="custom-option" onclick="selectCustomOption('debtProduct', 'None', '')"><div class="none-icon">N</div> None</div>
+              <div class="custom-option" onclick="selectCustomOption('debtProduct', 'Hot IPTV', 'https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp')"><img src="https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp"> Hot IPTV</div>
+              <div class="custom-option" onclick="selectCustomOption('debtProduct', 'Ibo pro', 'https://i.ibb.co/DfxxWqWr/logo-512.webp')"><img src="https://i.ibb.co/DfxxWqWr/logo-512.webp"> Ibo pro</div>
+              <div class="custom-option" onclick="selectCustomOption('debtProduct', 'Ultra VIP', 'https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg')"><img src="https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg"> Ultra VIP</div>
+              <div class="custom-option" onclick="selectCustomOption('debtProduct', 'Vergnia', 'https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp')"><img src="https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp"> Vergnia</div>
+              <div class="custom-option" onclick="selectCustomOption('debtProduct', 'Bob Player', 'https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp')"><img src="https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp"> Bob Player</div>
+            </div>
+            <input type="hidden" id="debtProduct" value="None">
+          </div>
+        </div>
+        <div class="form-group full"><label data-i18n="lbl_note">Note / Remarque</label><input class="input" id="debtNote" placeholder="Ex: Abonnement..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-dark" onclick="closeModal('debtModal')" data-i18n="btn_cancel">Annuler</button><button class="btn btn-lime" onclick="saveDebt()" data-i18n="btn_add_invoice">Ajouter & Facturer</button></div>
+  </div>
+</div>
+
+<div class="modal" id="paymentModal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 data-i18n="modal_payment_title">Paiement</h3><button class="close" onclick="closeModal('paymentModal')">×</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="paymentClientId">
+      <div class="form-grid">
+        <div class="form-group full"><label data-i18n="lbl_client">Client</label><select id="paymentClient"><option value="" data-i18n="opt_select_client">Sélectionner un client</option></select></div>
+        <div class="form-group"><label id="paymentAmountLabel">Montant</label><input class="input" type="number" min="0" step="0.01" id="paymentAmount" placeholder="0.00"></div>
+        <div class="form-group full">
+          <label data-i18n="lbl_application">Application</label>
+          <div class="custom-select-wrapper" id="wrapper_paymentProduct">
+            <div class="custom-select-trigger" onclick="toggleCustomSelect('paymentProduct')"><span id="trigger_paymentProduct"><div class="none-icon">N</div> None</span><span>▼</span></div>
+            <div class="custom-options" id="options_paymentProduct">
+              <div class="custom-option" onclick="selectCustomOption('paymentProduct', 'None', '')"><div class="none-icon">N</div> None</div>
+              <div class="custom-option" onclick="selectCustomOption('paymentProduct', 'Hot IPTV', 'https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp')"><img src="https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp"> Hot IPTV</div>
+              <div class="custom-option" onclick="selectCustomOption('paymentProduct', 'Ibo pro', 'https://i.ibb.co/DfxxWqWr/logo-512.webp')"><img src="https://i.ibb.co/DfxxWqWr/logo-512.webp"> Ibo pro</div>
+              <div class="custom-option" onclick="selectCustomOption('paymentProduct', 'Ultra VIP', 'https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg')"><img src="https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg"> Ultra VIP</div>
+              <div class="custom-option" onclick="selectCustomOption('paymentProduct', 'Vergnia', 'https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp')"><img src="https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp"> Vergnia</div>
+              <div class="custom-option" onclick="selectCustomOption('paymentProduct', 'Bob Player', 'https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp')"><img src="https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp"> Bob Player</div>
+            </div>
+            <input type="hidden" id="paymentProduct" value="None">
+          </div>
+        </div>
+        <div class="form-group full"><label data-i18n="lbl_note">Note / Remarque</label><input class="input" id="paymentNote" placeholder="Détails du paiement..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-dark" onclick="closeModal('paymentModal')" data-i18n="btn_cancel">Annuler</button><button class="btn btn-lime" onclick="savePayment()" data-i18n="btn_save_invoice">Enregistrer & Facturer</button></div>
+  </div>
+</div>
+
+<div class="modal" id="detailModal"><div class="modal-box" style="max-width:380px;"><div class="modal-head"><h3 id="clientDetailTitle">Dossier Client</h3><button class="close" onclick="closeModal('detailModal')">×</button></div><div class="modal-body" id="detailBody"></div></div></div>
+<div class="modal" id="receiptModal"><div class="modal-box" style="max-width:380px;"><div class="modal-head"><h3 data-i18n="modal_receipt_title">Reçu / Facture</h3><button class="close" onclick="closeModal('receiptModal')">×</button></div><div class="modal-body" id="receiptBody"></div><div class="modal-foot"><button class="btn btn-dark" onclick="closeModal('receiptModal')" data-i18n="btn_close">Fermer</button><button class="btn btn-lime" onclick="window.print()" data-i18n="btn_print">🖨 Imprimer</button></div></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* قاموس الترجمات للغات الثلاث */
+const i18nDict = {
+  FR: {
+    nav_dashboard: "Dashboard",
+    nav_devices: "Appareils",
+    nav_clients: "Clients",
+    nav_abonnements: "Abonnements",
+    nav_payments: "Paiements",
+    nav_history: "Historique",
+    nav_activation: "Activation",
+    nav_settings: "Paramètres",
+    dash_title: "Dashboard",
+    dash_sub: "Vue générale de votre panel",
+    btn_new_client: "＋ Nouveau client",
+    stat_clients: "Clients",
+    stat_sub_clients: "Total clients",
+    stat_due: "À payer",
+    stat_sub_due: "Total facturé",
+    stat_paid: "Payé",
+    stat_sub_paid: "Total reçu",
+    stat_remain: "Reste",
+    stat_sub_remain: "Solde restant",
+    card_recent_clients: "Clients récents",
+    btn_see_all: "Voir tous",
+    th_client: "Client",
+    th_account: "Compte",
+    th_status: "État",
+    th_remain: "Reste",
+    card_quick_actions: "Actions rapides",
+    qa_new_client: "Nouveau client",
+    qa_new_client_sub: "Ajouter un client",
+    qa_new_payment: "Nouveau paiement",
+    qa_new_payment_sub: "Enregistrer un paiement",
+    qa_activation: "Activation",
+    qa_activation_sub: "Activer une playlist",
+    qa_subscription: "Abonnement",
+    qa_subscription_sub: "Nouveau abonnement",
+    dev_page_title: "Appareils Électroniques",
+    dev_page_sub: "Catalogue des appareils avec gestion précise des prix et quantités",
+    btn_reset_catalog: "Réinitialiser / Nouveau",
+    dev_pos_title: "Point de Vente & Prix Unitaires",
+    dev_catalog_badge: "Catalogue Interactif",
+    dev_select_label: "Sélectionnez les appareils, quantités et définissez le prix unitaire :",
+    dev_select_client_label: "Sélectionnez un client existant (ou laissez vide)",
+    dev_no_client_opt: "-- Nouveau Client / Sans nom --",
+    btn_edit_add: "✏️ Modifier / Ajouter",
+    dev_payment_method_label: "Moyen de paiement",
+    opt_cash: "Espèces",
+    opt_transfer: "Virement",
+    lbl_general_total: "Total Général :",
+    btn_emit_invoice: "🧾 Émettre la facture",
+    cli_page_title: "Clients",
+    cli_page_sub: "Gestion de vos clients",
+    cli_list_title: "Liste des clients",
+    th_year: "Année",
+    th_whatsapp: "WhatsApp",
+    th_total: "Total",
+    th_paid: "Payé",
+    th_actions: "Actions",
+    sub_page_title: "Nouveau Abonnement",
+    sub_page_sub: "Gestion des abonnements Xtream / M3U",
+    sub_xtream_info_title: "📡 Informations Xtream",
+    m3u_auto_title: "M3U → XTREAM AUTOMATIQUE",
+    m3u_status_hint: "Collez le lien M3U : extraction auto des identifiants et de la validité.",
+    lbl_client: "Client",
+    opt_select_client: "Sélectionner un client",
+    lbl_client_name: "Nom du client",
+    lbl_application: "Application",
+    lbl_xtream_url: "🌐 Xtream Server / URL",
+    lbl_username: "👤 Username",
+    lbl_password: "🔑 Password",
+    lbl_duration: "📅 Durée",
+    opt_1month: "1 mois",
+    opt_12months: "12 mois",
+    opt_detected_link: "Détecté du lien",
+    lbl_start_date: "📆 Date début",
+    lbl_expiry_date: "⏳ Date d'expiration (Détectée)",
+    lbl_note: "📝 Note / Remarque",
+    btn_create_sub: "📡＋ Créer l'abonnement",
+    sub_list_title: "📡 Abonnements Xtream",
+    th_date: "Date",
+    th_xtream: "Xtream",
+    th_expiry: "Expiration",
+    pay_page_title: "Paiements",
+    pay_page_sub: "Suivi des paiements",
+    btn_new_payment: "＋ Nouveau paiement",
+    pay_history_title: "Historique des paiements",
+    th_date_time: "Date & Heure",
+    th_app_note: "App / Note",
+    th_amount: "Montant",
+    hist_page_title: "Historique",
+    hist_page_sub: "Toutes les opérations",
+    hist_recent_title: "Activité récente",
+    act_page_title: "Activation",
+    act_page_sub: "Activation Playlist",
+    act_new_title: "Nouvelle activation",
+    lbl_mac: "MAC Address",
+    btn_activate: "⚡ Activer la playlist",
+    act_list_title: "Activations",
+    th_mac_app: "MAC / App",
+    th_duration_expiry: "Durée / Expiration",
+    set_page_title: "Paramètres",
+    set_page_sub: "Configuration du panel, Devises & Sécurité",
+    set_security_title: "إدارة النظام والأمان (System & Security)",
+    set_suspend_title: "حظر وتوقيف أكواد العملاء",
+    set_suspend_sub: "إيقاف أي كود تفعيل فوراً ومنعه من الدخول",
+    set_backup_title: "إدارة النسخ الاحتياطي (Backup & Restore)",
+    set_backup_sub: "تصدير أو استرجاع بيانات وشبكة البانل",
+    set_lang_title: "Gestion de la Langue Active",
+    set_lang_desc: "اختر لغة العرض المفضلة (Français, English, العربية):",
+    set_currency_title: "Gestion de la Devise Active",
+    set_currency_desc: "انقر على الزر أدناه لفتح نافذة اختيار العملة السريعة وتعديل العملة المفضلة:",
+    modal_client_title: "Nouveau client",
+    lbl_name_surname: "Nom / Prénom",
+    lbl_year: "Année",
+    lbl_username_account: "Username / Compte",
+    btn_cancel: "Annuler",
+    btn_delete: "Supprimer",
+    btn_save: "Enregistrer",
+    modal_add_amount: "Ajouter montant",
+    btn_add_invoice: "Ajouter & Facturer",
+    modal_payment_title: "Paiement",
+    btn_save_invoice: "Enregistrer & Facturer",
+    modal_receipt_title: "Reçu / Facture",
+    btn_close: "Fermer",
+    btn_print: "🖨 Imprimer"
+  },
+  EN: {
+    nav_dashboard: "Dashboard",
+    nav_devices: "Devices",
+    nav_clients: "Clients",
+    nav_abonnements: "Subscriptions",
+    nav_payments: "Payments",
+    nav_history: "History",
+    nav_activation: "Activation",
+    nav_settings: "Settings",
+    dash_title: "Dashboard",
+    dash_sub: "General overview of your panel",
+    btn_new_client: "＋ New client",
+    stat_clients: "Clients",
+    stat_sub_clients: "Total clients",
+    stat_due: "Due",
+    stat_sub_due: "Total billed",
+    stat_paid: "Paid",
+    stat_sub_paid: "Total received",
+    stat_remain: "Remaining",
+    stat_sub_remain: "Remaining balance",
+    card_recent_clients: "Recent clients",
+    btn_see_all: "See all",
+    th_client: "Client",
+    th_account: "Account",
+    th_status: "Status",
+    th_remain: "Remaining",
+    card_quick_actions: "Quick actions",
+    qa_new_client: "New client",
+    qa_new_client_sub: "Add a client",
+    qa_new_payment: "New payment",
+    qa_new_payment_sub: "Record a payment",
+    qa_activation: "Activation",
+    qa_activation_sub: "Activate a playlist",
+    qa_subscription: "Subscription",
+    qa_subscription_sub: "New subscription",
+    dev_page_title: "Electronic Devices",
+    dev_page_sub: "Device catalog with precise price and quantity management",
+    btn_reset_catalog: "Reset / New",
+    dev_pos_title: "Point of Sale & Unit Prices",
+    dev_catalog_badge: "Interactive Catalog",
+    dev_select_label: "Select devices, quantities and set the unit price:",
+    dev_select_client_label: "Select an existing client (or leave blank)",
+    dev_no_client_opt: "-- New Client / Unnamed --",
+    btn_edit_add: "✏️ Edit / Add",
+    dev_payment_method_label: "Payment method",
+    opt_cash: "Cash",
+    opt_transfer: "Bank Transfer",
+    lbl_general_total: "General Total:",
+    btn_emit_invoice: "🧾 Issue invoice",
+    cli_page_title: "Clients",
+    cli_page_sub: "Manage your clients",
+    cli_list_title: "Client List",
+    th_year: "Year",
+    th_whatsapp: "WhatsApp",
+    th_total: "Total",
+    th_paid: "Paid",
+    th_actions: "Actions",
+    sub_page_title: "New Subscription",
+    sub_page_sub: "Xtream / M3U subscription management",
+    sub_xtream_info_title: "📡 Xtream Information",
+    m3u_auto_title: "M3U → AUTOMATIC XTREAM",
+    m3u_status_hint: "Paste M3U link: auto-extraction of credentials & validity.",
+    lbl_client: "Client",
+    opt_select_client: "Select a client",
+    lbl_client_name: "Client Name",
+    lbl_application: "Application",
+    lbl_xtream_url: "🌐 Xtream Server / URL",
+    lbl_username: "👤 Username",
+    lbl_password: "🔑 Password",
+    lbl_duration: "📅 Duration",
+    opt_1month: "1 month",
+    opt_12months: "12 months",
+    opt_detected_link: "Detected from link",
+    lbl_start_date: "📆 Start date",
+    lbl_expiry_date: "⏳ Expiry Date (Detected)",
+    lbl_note: "📝 Note / Remark",
+    btn_create_sub: "📡＋ Create Subscription",
+    sub_list_title: "📡 Xtream Subscriptions",
+    th_date: "Date",
+    th_xtream: "Xtream",
+    th_expiry: "Expiry",
+    pay_page_title: "Payments",
+    pay_page_sub: "Payment tracking",
+    btn_new_payment: "＋ New payment",
+    pay_history_title: "Payment History",
+    th_date_time: "Date & Time",
+    th_app_note: "App / Note",
+    th_amount: "Amount",
+    hist_page_title: "History",
+    hist_page_sub: "All operations",
+    hist_recent_title: "Recent activity",
+    act_page_title: "Activation",
+    act_page_sub: "Playlist Activation",
+    act_new_title: "New activation",
+    lbl_mac: "MAC Address",
+    btn_activate: "⚡ Activate Playlist",
+    act_list_title: "Activations",
+    th_mac_app: "MAC / App",
+    th_duration_expiry: "Duration / Expiry",
+    set_page_title: "Settings",
+    set_page_sub: "Panel configuration, Currencies & Security",
+    set_security_title: "System & Security",
+    set_suspend_title: "Suspend Client Codes",
+    set_suspend_sub: "Immediately block any activation code and deny access",
+    set_backup_title: "Backup & Restore",
+    set_backup_sub: "Export or restore panel database and network data",
+    set_lang_title: "Active Language Management",
+    set_lang_desc: "Choose your preferred display language (Français, English, العربية):",
+    set_currency_title: "Active Currency Management",
+    set_currency_desc: "Click below to open the currency selector and update your preferred currency:",
+    modal_client_title: "New Client",
+    lbl_name_surname: "Name / Surname",
+    lbl_year: "Year",
+    lbl_username_account: "Username / Account",
+    btn_cancel: "Cancel",
+    btn_delete: "Delete",
+    btn_save: "Save",
+    modal_add_amount: "Add Amount",
+    btn_add_invoice: "Add & Invoice",
+    modal_payment_title: "Payment",
+    btn_save_invoice: "Save & Invoice",
+    modal_receipt_title: "Receipt / Invoice",
+    btn_close: "Close",
+    btn_print: "🖨 Print"
+  },
+  AR: {
+    nav_dashboard: "لوحة القيادة",
+    nav_devices: "الأجهزة",
+    nav_clients: "العملاء",
+    nav_abonnements: "الاشتراكات",
+    nav_payments: "المدفوعات",
+    nav_history: "السجل",
+    nav_activation: "التفعيل",
+    nav_settings: "الإعدادات",
+    dash_title: "لوحة القيادة",
+    dash_sub: "نظرة عامة على البانل الخاص بك",
+    btn_new_client: "＋ عميل جديد",
+    stat_clients: "العملاء",
+    stat_sub_clients: "إجمالي العملاء",
+    stat_due: "المستحق",
+    stat_sub_due: "إجمالي الفواتير",
+    stat_paid: "المدفوع",
+    stat_sub_paid: "إجمالي المستلم",
+    stat_remain: "المتبقي",
+    stat_sub_remain: "الرصيد المتبقي",
+    card_recent_clients: "العملاء الأخيرون",
+    btn_see_all: "عرض الكل",
+    th_client: "العميل",
+    th_account: "الحساب",
+    th_status: "الحالة",
+    th_remain: "المتبقي",
+    card_quick_actions: "إجراءات سريعة",
+    qa_new_client: "عميل جديد",
+    qa_new_client_sub: "إضافة عميل",
+    qa_new_payment: "دفعة جديدة",
+    qa_new_payment_sub: "تسجيل دفعة مالية",
+    qa_activation: "التفعيل",
+    qa_activation_sub: "تفعيل قائمة تشغيل",
+    qa_subscription: "اشتراك",
+    qa_subscription_sub: "اشتراك جديد",
+    dev_page_title: "الأجهزة الإلكترونية",
+    dev_page_sub: "كتالوج الأجهزة مع إدارة دقيقة للأسعار والكميات",
+    btn_reset_catalog: "إعادة تعيين / جديد",
+    dev_pos_title: "نقطة البيع والأسعار الفردية",
+    dev_catalog_badge: "كتالوج تفاعلي",
+    dev_select_label: "حدد الأجهزة والكميات وقم بتعيين السعر الفردي:",
+    dev_select_client_label: "اختر عميلاً حالياً (أو اتركه فارغاً)",
+    dev_no_client_opt: "-- عميل جديد / بدون اسم --",
+    btn_edit_add: "✏️ تعديل / إضافة",
+    dev_payment_method_label: "طريقة الدفع",
+    opt_cash: "نقداً (Espèces)",
+    opt_transfer: "تحويل بنكي",
+    lbl_general_total: "الإجمالي العام:",
+    btn_emit_invoice: "🧾 إصدار الفاتورة",
+    cli_page_title: "العملاء",
+    cli_page_sub: "إدارة عملائك",
+    cli_list_title: "قائمة العملاء",
+    th_year: "السنة",
+    th_whatsapp: "واتساب",
+    th_total: "الإجمالي",
+    th_paid: "المدفوع",
+    th_actions: "الإجراءات",
+    sub_page_title: "اشتراك جديد",
+    sub_page_sub: "إدارة اشتراكات Xtream / M3U",
+    sub_xtream_info_title: "📡 معلومات Xtream",
+    m3u_auto_title: "M3U ← استخراج تلقائي لـ Xtream",
+    m3u_status_hint: "الصق رابط M3U: استخراج تلقائي لبيانات الاعتماد والصلاحية.",
+    lbl_client: "العميل",
+    opt_select_client: "اختر عميلاً",
+    lbl_client_name: "اسم العميل",
+    lbl_application: "التطبيق",
+    lbl_xtream_url: "🌐 سيرفر / رابط Xtream",
+    lbl_username: "👤 اسم المستخدم",
+    lbl_password: "🔑 كلمة المرور",
+    lbl_duration: "📅 المدة",
+    opt_1month: "شهر واحد",
+    opt_12months: "12 شهراً",
+    opt_detected_link: "مستخرج من الرابط",
+    lbl_start_date: "📆 تاريخ البدء",
+    lbl_expiry_date: "⏳ تاريخ الانتهاء (المكتشف)",
+    lbl_note: "📝 ملاحظة / تعليق",
+    btn_create_sub: "📡＋ إنشاء الاشتراك",
+    sub_list_title: "📡 اشتراكات Xtream",
+    th_date: "التاريخ",
+    th_xtream: "Xtream",
+    th_expiry: "الانتهاء",
+    pay_page_title: "المدفوعات",
+    pay_page_sub: "تتبع المدفوعات",
+    btn_new_payment: "＋ دفعة جديدة",
+    pay_history_title: "سجل المدفوعات",
+    th_date_time: "التاريخ والوقت",
+    th_app_note: "التطبيق / الملاحظة",
+    th_amount: "المبلغ",
+    hist_page_title: "السجل",
+    hist_page_sub: "جميع العمليات",
+    hist_recent_title: "النشاط الأخير",
+    act_page_title: "التفعيل",
+    act_page_sub: "تفعيل القوائم",
+    act_new_title: "تفعيل جديد",
+    lbl_mac: "عنوان MAC",
+    btn_activate: "⚡ تفعيل القائمة",
+    act_list_title: "التفعيلات",
+    th_mac_app: "MAC / التطبيق",
+    th_duration_expiry: "المدة / الانتهاء",
+    set_page_title: "الإعدادات",
+    set_page_sub: "إعدادات البانل، العملات والأمان",
+    set_security_title: "إدارة النظام والأمان (System & Security)",
+    set_suspend_title: "حظر وتوقيف أكواد العملاء",
+    set_suspend_sub: "إيقاف أي كود تفعيل فوراً ومنعه من الدخول",
+    set_backup_title: "إدارة النسخ الاحتياطي (Backup & Restore)",
+    set_backup_sub: "تصدير أو استرجاع بيانات وشبكة البانل",
+    set_lang_title: "إدارة لغة النظام النشطة",
+    set_lang_desc: "اختر لغة العرض المفضلة (Français, English, العربية):",
+    set_currency_title: "إدارة العملة النشطة",
+    set_currency_desc: "انقر أدناه لفتح نافذة اختيار العملة وتحديث المفضلة:",
+    modal_client_title: "عميل جديد",
+    lbl_name_surname: "الاسم الكامل",
+    lbl_year: "السنة",
+    lbl_username_account: "اسم المستخدم / الحساب",
+    btn_cancel: "إلغاء",
+    btn_delete: "حذف",
+    btn_save: "حفظ",
+    modal_add_amount: "إضافة مبلغ",
+    btn_add_invoice: "إضافة وفوترة",
+    modal_payment_title: "دفعة مالية",
+    btn_save_invoice: "حفظ وفوترة",
+    modal_receipt_title: "إيصال / فاتورة",
+    btn_close: "إغلاق",
+    btn_print: "🖨 طباعة"
+  }
+};
+
+let activeLanguage = "FR";
+
+function changeActiveLanguage(langCode) {
+  if (!i18nDict[langCode]) return;
+  activeLanguage = langCode;
+  localStorage.setItem("manual_language_choice", langCode);
+  
+  const htmlRoot = document.getElementById("htmlRoot");
+  const qLang = document.getElementById("quickLangDisplay");
+  const sLang = document.getElementById("settingsLangLabel");
+  
+  if (qLang) qLang.textContent = langCode;
+  if (sLang) sLang.textContent = langCode;
+
+  if (langCode === "AR") {
+    htmlRoot.setAttribute("dir", "rtl");
+    htmlRoot.setAttribute("lang", "ar");
+  } else {
+    htmlRoot.setAttribute("dir", "ltr");
+    htmlRoot.setAttribute("lang", langCode.toLowerCase());
+  }
+
+  applyTranslations();
+  renderLanguageSelectorGrids();
+  closeModal('languageModal');
+  toast(`🌐 Langue / Language / اللغة : ${langCode}`);
+}
+
+function applyTranslations() {
+  const dict = i18nDict[activeLanguage] || i18nDict["FR"];
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    let key = el.getAttribute("data-i18n");
+    if (dict[key]) {
+      el.textContent = dict[key];
+    }
+  });
+}
+
+const langOptionsList = [
+  { val: "FR", label: "Français", sub: "Français • Interface principale", sym: "FR" },
+  { val: "EN", label: "English", sub: "English • International Version", sym: "EN" },
+  { val: "AR", label: "العربية", sub: "العربية • واجهة كاملة باليمين", sym: "AR" }
+];
+
+function renderLanguageSelectorGrids() {
+  const container = document.getElementById("modalLangSelectorGrid");
+  if (!container) return;
+  let html = langOptionsList.map(item => {
+    let isActive = activeLanguage === item.val;
+    return `
+      <div class="lang-card ${isActive ? 'active' : ''}" onclick="changeActiveLanguage('${item.val}')">
+        <div class="lang-info-wrap">
+          <div class="lang-flag-badge">${item.sym}</div>
+          <div>
+            <div class="lang-name-main">${item.label}</div>
+            <div class="lang-name-sub">${item.sub}</div>
+          </div>
+        </div>
+        <div class="lang-radio-dot"></div>
+      </div>
+    `;
+  }).join("");
+  container.innerHTML = html;
+}
+
+function openLanguageModal() {
+  openModal('languageModal');
+}
+
+const currencyMap = {
+  "MA": { code: "MAD", symbol: "DH", name: "Maroc" },
+  "FR": { code: "EUR", symbol: "€", name: "France" },
+  "ES": { code: "EUR", symbol: "€", name: "Espagne" },
+  "BE": { code: "EUR", symbol: "€", name: "Belgique" },
+  "DZ": { code: "DZD", symbol: "DA", name: "Algérie" },
+  "TN": { code: "TND", symbol: "DT", name: "Tunisie" },
+  "GB": { code: "GBP", symbol: "£", name: "Royaume-Uni" },
+  "US": { code: "USD", symbol: "$", name: "États-Unis" },
+  "SN": { code: "XOF", symbol: "FCFA", name: "Sénégal" },
+  "CI": { code: "XOF", symbol: "FCFA", name: "Côte d'Ivoire" }
+};
+
+let activeCurrency = { code: "MAD", symbol: "DH" };
+
+async function detectUserCountryAndCurrency() {
+  let manual = localStorage.getItem("manual_currency_choice");
+  if(manual && manual !== "AUTO") {
+    setCurrencyByCode(manual);
+    return;
+  }
+  try {
+    let res = await fetch("https://ipapi.co/json/");
+    let data = await res.json();
+    if(data && data.country_code) {
+      let cCode = data.country_code;
+      let matched = currencyMap[cCode];
+      if(matched) {
+        activeCurrency = { code: matched.code, symbol: matched.symbol };
+      } else {
+        activeCurrency = { code: "USD", symbol: "$" };
+      }
+    }
+  } catch(e) {
+    activeCurrency = { code: "MAD", symbol: "DH" };
+  }
+  updateCurrencyLabels();
+  renderCurrencySelectorGrids();
+  renderAll();
+}
+
+function changeActiveCurrency(val) {
+  localStorage.setItem("manual_currency_choice", val);
+  if(val === "AUTO") {
+    detectUserCountryAndCurrency();
+  } else {
+    setCurrencyByCode(val);
+  }
+  closeModal('currencyModal');
+}
+
+function setCurrencyByCode(code) {
+  const mapping = {
+    "MAD": { code: "MAD", symbol: "DH" },
+    "EUR": { code: "EUR", symbol: "€" },
+    "USD": { code: "USD", symbol: "$" },
+    "XOF": { code: "XOF", symbol: "FCFA" },
+    "GBP": { code: "GBP", symbol: "£" },
+    "DZD": { code: "DZD", symbol: "DA" },
+    "TND": { code: "TND", symbol: "DT" }
+  };
+  if(mapping[code]) {
+    activeCurrency = mapping[code];
+    updateCurrencyLabels();
+    renderCurrencySelectorGrids();
+    renderAll();
+    toast(`💱 Devise changée : ${activeCurrency.symbol}`);
+  }
+}
+
+function updateCurrencyLabels() {
+  const sym = activeCurrency.symbol;
+  const qBtn = document.getElementById("quickCurrencyDisplay");
+  if(qBtn) qBtn.textContent = sym;
+  const sLabel = document.getElementById("settingsCurrencyLabel");
+  if(sLabel) sLabel.textContent = sym;
+
+  document.getElementById("abonnementPriceLabel").textContent = `Prix (${sym})`;
+  document.getElementById("activationPriceLabel").textContent = `Prix (${sym})`;
+  document.getElementById("debtAmountLabel").textContent = `Montant (${sym})`;
+  document.getElementById("paymentAmountLabel").textContent = `Montant (${sym})`;
+}
+
+const currencyOptionsList = [
+  { val: "AUTO", label: "Automatique (Détecté par IP)", sub: "Sélection intelligente selon votre position géographique", sym: "⚡" },
+  { val: "MAD", label: "MAD (DH)", sub: "Maroc • Dirham Marocain", sym: "DH" },
+  { val: "EUR", label: "EUR (€)", sub: "France / Zone Euro • Euro", sym: "€" },
+  { val: "USD", label: "USD ($)", sub: "États-Unis / International • Dollar", sym: "$" },
+  { val: "XOF", label: "XOF (FCFA)", sub: "Afrique de l'Ouest • Franc CFA", sym: "FCFA" },
+  { val: "GBP", label: "GBP (£)", sub: "Royaume-Uni • Livre Sterling", sym: "£" },
+  { val: "DZD", label: "DZD (DA)", sub: "Algérie • Dinar Algérien", sym: "DA" },
+  { val: "TND", label: "TND (DT)", sub: "Tunisie • Dinar Tunisien", sym: "DT" }
+];
+
+function renderCurrencySelectorGrids() {
+  const containerModal = document.getElementById("modalCurrencySelectorGrid");
+  let manual = localStorage.getItem("manual_currency_choice") || "AUTO";
+  
+  let html = currencyOptionsList.map(item => {
+    let isActive = manual === item.val;
+    return `
+      <div class="currency-card ${isActive ? 'active' : ''}" onclick="changeActiveCurrency('${item.val}')">
+        <div class="currency-info-wrap">
+          <div class="currency-flag-badge">${item.sym}</div>
+          <div>
+            <div class="currency-name-main">${item.label}</div>
+            <div class="currency-name-sub">${item.sub}</div>
+          </div>
+        </div>
+        <div class="currency-radio-dot"></div>
+      </div>
+    `;
+  }).join("");
+
+  if(containerModal) containerModal.innerHTML = html;
+}
+
+function openCurrencyModal() {
+  openModal('currencyModal');
+}
+
+let clientProfile = {
+  name: "Sofiane-shop",
+  phone: "06 66 22 70 60",
+  whatsapp: "+212 6 30 47 34 98",
+  gmail: "soufianshop65@gmail.com",
+  logo: "https://i.ibb.co/LXWzbssm/IMG-20261104-145706.jpg",
+  signature: "Soufiane",
+  address: "حي المدرسي 310 تطوان",
+  expiry: "31/12/2030"
+};
+
+function getSuspendedCodes() {
+  try {
+    return JSON.parse(localStorage.getItem("credits_panel_suspended_codes") || "[]");
+  } catch(e) {
+    return [];
+  }
+}
+
+function saveSuspendedCodes(list) {
+  localStorage.setItem("credits_panel_suspended_codes", JSON.stringify(list));
+}
+
+function cleanCodeFormat(code) {
+  return String(code || "").trim().replace(/^KEY_/, "");
+}
+
+function isCodeSuspended(codeInput) {
+  const cleanInput = cleanCodeFormat(codeInput);
+  if (!cleanInput) return false;
+  const suspendedList = getSuspendedCodes();
+  return suspendedList.some(item => cleanCodeFormat(item.code) === cleanInput);
+}
+
+function openSuspendModal() {
+  openModal('suspendModal');
+  renderSuspendedCodesTable();
+}
+
+function openBackupManagerModal() {
+  openModal('backupManagerModal');
+}
+
+function suspendClientCode() {
+  const inputEl = document.getElementById("suspendCodeInput");
+  const rawCode = inputEl.value.trim();
+  if(!rawCode) { alert("يرجى إدخال الكود أولاً!"); return; }
+
+  const clean = cleanCodeFormat(rawCode);
+  let suspendedList = getSuspendedCodes();
+
+  if(suspendedList.some(item => cleanCodeFormat(item.code) === clean)) {
+    alert("هذا الكود محظور بالفعل!");
+    return;
+  }
+
+  suspendedList.unshift({
+    code: rawCode,
+    date: new Date().toLocaleString("fr-FR")
+  });
+
+  saveSuspendedCodes(suspendedList);
+  inputEl.value = "";
+  renderSuspendedCodesTable();
+  toast("🚫 تم حظر وتوقيف هذا الكود بنجاح!");
+
+  let currentSaved = localStorage.getItem("saved_auth_key");
+  if(currentSaved && isCodeSuspended(currentSaved)) {
+    localStorage.removeItem("saved_auth_key");
+    location.reload();
+  }
+}
+
+function removeSuspendedCode(codeToRemove) {
+  let suspendedList = getSuspendedCodes();
+  suspendedList = suspendedList.filter(item => cleanCodeFormat(item.code) !== cleanCodeFormat(codeToRemove));
+  saveSuspendedCodes(suspendedList);
+  renderSuspendedCodesTable();
+  toast("🔓 تم إلغاء حظر الكود بنجاح");
+}
+
+function renderSuspendedCodesTable() {
+  const tbody = document.getElementById("suspendedCodesTable");
+  if(!tbody) return;
+  const list = getSuspendedCodes();
+  if(!list.length) {
+    tbody.innerHTML = `<tr><td colspan="3"><div class="empty">لا يوجد أي كود محظور حالياً</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(item => `
+    <tr>
+      <td><code style="color:var(--danger); font-weight:bold;">${escapeHtml(item.code)}</code></td>
+      <td style="font-size:8px;">${escapeHtml(item.date)}</td>
+      <td>
+        <button class="btn btn-lime btn-small" onclick="removeSuspendedCode('${escapeHtml(item.code)}')">إلغاء 🔓</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function authenticateClient(savedKey = null) {
+  const input = savedKey || document.getElementById("authPassword").value.trim();
+  if(!input) { if(!savedKey) alert("يرجى إدخال كود التفعيل!"); return false; }
+
+  if (isCodeSuspended(input)) {
+    alert("⚠️ هذا الكود معطل وموقوف حالياً من قبل الإدارة!");
+    localStorage.removeItem("saved_auth_key");
+    document.getElementById("authOverlay").style.display = "flex";
+    return false;
+  }
+
+  try {
+    let cleanKey = cleanCodeFormat(input);
+    let decodedStr = decodeURIComponent(escape(atob(cleanKey)));
+    let data = JSON.parse(decodedStr);
+
+    if(data.n) {
+      clientProfile.name = data.n;
+      clientProfile.expiry = data.e || "31/12/2030";
+      clientProfile.phone = data.p || clientProfile.phone;
+      clientProfile.whatsapp = data.w || clientProfile.whatsapp;
+      clientProfile.gmail = data.g || clientProfile.gmail;
+      clientProfile.logo = data.l || clientProfile.logo;
+      clientProfile.signature = data.s || data.n.split(" ")[0];
+      clientProfile.address = data.a || clientProfile.address;
+
+      let parts = clientProfile.expiry.split('/');
+      if(parts.length === 3) {
+        let expDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        let today = new Date();
+        if(today > expDate) {
+          if(!savedKey) alert("⚠️ عذراً، لقد انتهت صلاحية هذا التفعيل بتاريخ: " + clientProfile.expiry);
+          localStorage.removeItem("saved_auth_key");
+          return false;
+        }
+      }
+
+      localStorage.setItem("saved_auth_key", input);
+
+      applyDynamicBranding();
+      document.getElementById("authOverlay").style.display = "none";
+      if(!savedKey) toast("✨ تم التحقق وتفعيل اللوحة بنجاح حتى: " + clientProfile.expiry);
+      return true;
+    } else {
+      if(!savedKey) alert("كود التفعيل غير صالح!");
+      return false;
+    }
+  } catch(e) {
+    if(!savedKey) alert("كلمة السر / كود التفعيل غير صحيح!");
+    return false;
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  let savedKey = localStorage.getItem("saved_auth_key");
+  if(savedKey) {
+    authenticateClient(savedKey);
+  }
+  let savedLang = localStorage.getItem("manual_language_choice");
+  if(savedLang) {
+    changeActiveLanguage(savedLang);
+  } else {
+    changeActiveLanguage("FR");
+  }
+
+  if(navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist();
+  }
+  renderSuspendedCodesTable();
+  renderCurrencySelectorGrids();
+  renderLanguageSelectorGrids();
+});
+
+function applyDynamicBranding() {
+  document.getElementById("docTitle").textContent = clientProfile.name.toUpperCase() + " - PANEL PRO";
+  document.getElementById("brandText").innerHTML = `${clientProfile.name.toUpperCase()}<span>PANEL MANAGEMENT</span>`;
+  document.getElementById("brandLogoBox").innerHTML = `<img src="${clientProfile.logo}" alt="Logo">`;
+  document.getElementById("adminNameDisplay").textContent = clientProfile.name;
+  document.getElementById("panelExpiryDateLabel").textContent = clientProfile.expiry;
+  document.getElementById("sidebarFooterBrand").innerHTML = `${clientProfile.name.toUpperCase()} PANEL<br>Exp: ${clientProfile.expiry}`;
+  document.getElementById("topSubtitle").textContent = `${clientProfile.name} • Toujours à votre service`;
+}
+
+const appLogos = {
+  "None": "",
+  "Hot IPTV": "https://i.ibb.co/m5CRtrtV/939e65a3-917f-48a1-915e-3d77f2904537-1000x1000-BUu-BOu-M6s78-PKC3y7lv-RUrdb-TYB6r-Sb-Pj-Thw8f-Ah-1.webp",
+  "Ibo pro": "https://i.ibb.co/DfxxWqWr/logo-512.webp",
+  "Ultra VIP": "https://i.ibb.co/x8dMyqKd/IMG-20261101-200309.jpg",
+  "Vergnia": "https://i.ibb.co/mCJvfk80/Screenshot-20261106-090233.webp",
+  "Bob Player": "https://i.ibb.co/bg7GC1zP/Screenshot-20261106-090203.webp"
+};
+
+const deviceCatalog = {
+  "Récepteur ECHOLINK ZEN PRO 6": { name: "Récepteur ECHOLINK ZEN PRO 6", img: "https://i.ibb.co/zhqqWBWz/IMG-20261105-WA0005.webp" },
+  "Recepteur ECHOLINK FENTO PRO 6": { name: "Recepteur ECHOLINK FENTO PRO 6", img: "https://i.ibb.co/6cKNGRnD/IMG-20261105-175602.webp" },
+  "Récepteur NEXT VISION ST-M26": { name: "Récepteur NEXT VISION ST-M26", img: "https://i.ibb.co/23jd2sYv/IMG-20261105-175700.webp" },
+  "BOX SENIC SC-301": { name: "BOX SENIC SC-301", img: "https://i.ibb.co/Tx8YcQRY/IMG-20261105-175500.webp" },
+  "BOX ECHOLINK enova-box": { name: "BOX ECHOLINK enova-box", img: "https://i.ibb.co/chZ8qSb5/IMG-20261105-175931.webp" },
+  "Router TP-Link": { name: "Router TP-Link", img: "https://i.ibb.co/VY7K7vvq/IMG-20261105-175835.webp" },
+  "Box KOBRA Z1": { name: "Box KOBRA Z1", img: "https://i.ibb.co/39Y8F9tP/IMG-20261105-182425.webp" },
+  "Box AIROX K360": { name: "Box AIROX K360", img: "https://i.ibb.co/jP1vYjBm/IMG-20261105-182703.webp" },
+  "Récepteur MORSAT MINI HD DIAMOND": { name: "Récepteur MORSAT MINI HD DIAMOND", img: "https://i.ibb.co/bRj1vJcT/IMG-20261105-182910.webp" },
+  "Box KOBRA X1": { name: "Box KOBRA X1", img: "https://i.ibb.co/Kz7k4hnk/IMG-20261105-182957.webp" },
+  "Récepteur ÉVOLUTION Galaxy ZE-H7": { name: "Récepteur ÉVOLUTION Galaxy ZE-H7", img: "https://i.ibb.co/xt6cMXxS/IMG-20261105-183037.webp" },
+  "TV LG SMART TV": { name: "TV LG SMART TV", img: "https://i.ibb.co/6cttJ4ZS/IMG-20261105-WA0007.webp" },
+  "TV Xiaomi TV A 2025": { name: "TV Xiaomi TV A 2025", img: "https://i.ibb.co/60JJX3p2/IMG-20261105-WA0008.webp" },
+  "TV SAMSUNG QN88D 2024": { name: "TV SAMSUNG QN88D 2024", img: "https://i.ibb.co/wFRsGHjL/IMG-20261105-WA0009.webp" }
+};
+
+function getLogo(name) { return appLogos[name] || ""; }
+function getDeviceLogo(name) {
+  if (!name || name === "None") return "";
+  let trimmedName = name.trim();
+  if (deviceCatalog[trimmedName]) return deviceCatalog[trimmedName].img;
+  for (let key in deviceCatalog) {
+    if (trimmedName.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(trimmedName.toLowerCase())) {
+      return deviceCatalog[key].img;
+    }
+  }
+  return "";
+}
+
+let selectedDevicesQuantities = {};
+let selectedDevicesPrices = {};
+
+function resetCatalogData() {
+  selectedDevicesQuantities = {};
+  selectedDevicesPrices = {};
+  const clientSel = document.getElementById("unified_client_select");
+  if(clientSel) clientSel.value = "";
+  const paymentMethodSel = document.getElementById("unified_payment_method");
+  if(paymentMethodSel) paymentMethodSel.value = "Espèces";
+  const dynamicInput = document.getElementById("unified_dynamic_payment_detail");
+  if(dynamicInput) { dynamicInput.value = ""; delete dynamicInput.dataset.userEdited; }
+  onPaymentMethodChange();
+  renderDeviceCatalogGrid();
+  recalcUnifiedTotal();
+  toast("✨ Catalogue réinitialisé");
+}
+
+function renderDeviceCatalogGrid() {
+  const grid = document.getElementById("multiDeviceGrid");
+  if(!grid) return;
+  let html = "";
+  for(let key in deviceCatalog) {
+    let dev = deviceCatalog[key];
+    let qty = selectedDevicesQuantities[key] || 0;
+    let price = selectedDevicesPrices[key] !== undefined ? selectedDevicesPrices[key] : "";
+    let isSelected = qty > 0;
+    html += `
+      <div class="device-select-card ${isSelected ? 'selected' : ''}" id="dev_card_${key.replace(/\s+/g, '_')}">
+        <img src="${dev.img}" alt="${dev.name}" onclick="adjustDeviceQty('${key}', 1)">
+        <div class="dev-title" onclick="adjustDeviceQty('${key}', 1)">${dev.name}</div>
+        <div class="device-qty-row">
+          <div class="qty-btn" onclick="adjustDeviceQty('${key}', -1)">-</div>
+          <div class="qty-display">${qty}</div>
+          <div class="qty-btn" onclick="adjustDeviceQty('${key}', 1)">+</div>
+        </div>
+        <div class="device-price-row">
+          <label>Prix (${activeCurrency.symbol}):</label>
+          <input type="number" step="any" min="0" class="device-card-price-input" value="${price}" oninput="updateDevicePrice('${key}', this.value)" onclick="event.stopPropagation()">
+        </div>
+      </div>
+    `;
+  }
+  grid.innerHTML = html;
+}
+
+function adjustDeviceQty(deviceName, delta) {
+  let current = selectedDevicesQuantities[deviceName] || 0;
+  let updated = current + delta;
+  if(updated < 0) updated = 0;
+  if(updated === 0) {
+    delete selectedDevicesQuantities[deviceName];
+    delete selectedDevicesPrices[deviceName];
+  } else {
+    selectedDevicesQuantities[deviceName] = updated;
+    if(selectedDevicesPrices[deviceName] === undefined) selectedDevicesPrices[deviceName] = "";
+  }
+  renderDeviceCatalogGrid();
+  recalcUnifiedTotal();
+}
+
+function updateDevicePrice(deviceName, val) {
+  selectedDevicesPrices[deviceName] = val;
+  if (val !== "" && (!selectedDevicesQuantities[deviceName] || selectedDevicesQuantities[deviceName] <= 0)) {
+    selectedDevicesQuantities[deviceName] = 1;
+  }
+  recalcUnifiedTotal();
+}
+
+function recalcUnifiedTotal() {
+  let total = 0;
+  for(let key in selectedDevicesQuantities) {
+    total += (selectedDevicesQuantities[key] || 0) * (Number(selectedDevicesPrices[key]) || 0);
+  }
+  document.getElementById("unified_total_display").textContent = money(total);
+  const method = document.getElementById("unified_payment_method").value;
+  if(method === "Espèces") {
+    const input = document.getElementById("unified_dynamic_payment_detail");
+    if(input && !input.dataset.userEdited) input.value = total;
+  }
+}
+
+function fillDeviceClientDropdowns() {
+  const sel = document.getElementById("unified_client_select");
+  if(!sel) return;
+  const current = sel.value;
+  sel.innerHTML = `<option value="">-- Nouveau Client / Sans nom --</option>` + clients.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (Compte: ${escapeHtml(c.account||'-')})</option>`).join("");
+  if(current) sel.value = current;
+}
+
+function onUnifiedClientSelectChange() {
+  const clientId = document.getElementById("unified_client_select").value;
+  if(clientId) {
+    let c = getClient(clientId);
+    if(c) toast(`👤 تم اختيار العميل: ${c.name}`);
+  }
+}
+
+function openClientModalForQuickAdd() {
+  const clientId = document.getElementById("unified_client_select").value;
+  if(clientId) {
+    editClient(clientId);
+  } else {
+    openClientModal();
+  }
+}
+
+function onPaymentMethodChange() {
+  const method = document.getElementById("unified_payment_method").value;
+  const label = document.getElementById("dynamic_field_label");
+  const input = document.getElementById("unified_dynamic_payment_detail");
+  let total = 0;
+  for(let key in selectedDevicesQuantities) { total += (selectedDevicesQuantities[key] || 0) * (Number(selectedDevicesPrices[key]) || 0); }
+  input.dataset.userEdited = "";
+  if(method === "Espèces") { label.textContent = `Montant payé (Espèces)`; input.type = "number"; input.value = total; }
+  else { label.textContent = "N° de virement / Référence"; input.type = "text"; input.value = ""; }
+}
+
+const dynInput = document.getElementById("unified_dynamic_payment_detail");
+if(dynInput) dynInput.addEventListener("input", function(){ this.dataset.userEdited = "true"; });
+
+function checkoutUnifiedDevice() {
+  const clientId = document.getElementById("unified_client_select").value;
+  const paymentMethod = document.getElementById("unified_payment_method").value;
+  const paymentDetailInput = document.getElementById("unified_dynamic_payment_detail").value.trim();
+  const c = getClient(clientId);
+
+  let deviceKeys = Object.keys(selectedDevicesQuantities);
+  if(deviceKeys.length === 0) { toast("Veuillez sélectionner au moins un appareil"); return; }
+
+  let totalPrice = 0;
+  let parsedPrices = {};
+  deviceKeys.forEach(k => {
+    let pVal = Number(selectedDevicesPrices[k]) || 0;
+    parsedPrices[k] = pVal;
+    totalPrice += (selectedDevicesQuantities[k] || 0) * pVal;
+  });
+
+  if(totalPrice <= 0) { toast("Veuillez entrer les prix unitaires"); return; }
+  let paidAmount = paymentMethod === "Espèces" ? Number(paymentDetailInput || totalPrice) : totalPrice;
+  let clientNameFinal = c ? c.name : "Client Direct";
+
+  if(c) { 
+    c.totalDue = Number(c.totalDue || 0) + totalPrice; 
+    c.totalPaid = Number(c.totalPaid || 0) + paidAmount; 
+  }
+
+  let paymentInfoFormatted = paymentMethod === "Espèces" ? `Espèces (${paidAmount} ${activeCurrency.symbol})` : `Virement (${paymentDetailInput || 'N/A'})`;
+  const transObj = {
+    id: makeId(), clientId: c ? c.id : "", name: clientNameFinal, type: "Appareil",
+    amount: totalPrice, paidAmount: paidAmount,
+    deviceQuantities: {...selectedDevicesQuantities}, devicePrices: parsedPrices,
+    product: "None", paymentMethod: paymentInfoFormatted,
+    note: `Paiement: ${paymentMethod} (Montant payé: ${paidAmount} ${activeCurrency.symbol})`,
+    date: now(), agent: clientProfile.name, currency: activeCurrency.symbol
+  };
+
+  transactions.unshift(transObj);
+  addHistory("Appareil Vendu", `${clientNameFinal} • ${money(totalPrice)}`);
+  saveData(); renderAll(); toast("Facture émise avec succès");
+  openDebtReceipt(transObj.id);
+}
+
+function toggleCustomSelect(id) {
+  const options = document.getElementById('options_' + id);
+  document.querySelectorAll('.custom-options').forEach(o => { if(o.id !== 'options_' + id) o.classList.remove('open'); });
+  options.classList.toggle('open');
+}
+
+function selectCustomOption(id, val, img) {
+  document.getElementById(id).value = val;
+  const trigger = document.getElementById('trigger_' + id);
+  trigger.innerHTML = (val === 'None' || !img) ? `<div class="none-icon">N</div> ${val}` : `<img src="${img}"> ${val}`;
+  document.getElementById('options_' + id).classList.remove('open');
+}
+
+window.addEventListener('click', function(e) {
+  if (!e.target.closest('.custom-select-wrapper')) { document.querySelectorAll('.custom-options').forEach(o => o.classList.remove('open')); }
+});
+
+const KEYS={ clients:"credits_panel_clients", payments:"credits_panel_payments", history:"credits_panel_history", transactions:"credits_panel_transactions", activations:"credits_panel_activations", abonnements:"credits_panel_abonnements" }; 
+let clients=load(KEYS.clients,[]); 
+let payments=load(KEYS.payments,[]); 
+let historyData=load(KEYS.history,[]); 
+let transactions=load(KEYS.transactions,[]); 
+let activations=load(KEYS.activations,[]); 
+let abonnements=load(KEYS.abonnements,[]); 
+
+function load(key,fallback){ try{ const value=localStorage.getItem(key); return value?JSON.parse(value):fallback; }catch(e){ return fallback; } } 
+function saveData(){ 
+  localStorage.setItem(KEYS.clients,JSON.stringify(clients)); 
+  localStorage.setItem(KEYS.payments,JSON.stringify(payments)); 
+  localStorage.setItem(KEYS.history,JSON.stringify(historyData)); 
+  localStorage.setItem(KEYS.transactions,JSON.stringify(transactions)); 
+  localStorage.setItem(KEYS.activations,JSON.stringify(activations)); 
+  localStorage.setItem(KEYS.abonnements,JSON.stringify(abonnements)); 
+} 
+function makeId(){ return Date.now().toString(36)+Math.random().toString(36).substring(2,8); } 
+function money(value){ return Number(value||0).toLocaleString("fr-FR",{minimumFractionDigits:0,maximumFractionDigits:2})+" "+activeCurrency.symbol; } 
+function now(){ return new Date().toLocaleString("fr-FR"); } 
+function currentYear(){ return new Date().getFullYear().toString(); }
+function escapeHtml(value){ return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); } 
+function initials(name){ return String(name||"?").split(" ").filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase(); } 
+function getClient(id){ return clients.find(c=>c.id===id); } 
+
+const titles={ dashboard:"Dashboard", devices:"Appareils", clients:"Clients", abonnements:"Abonnements", payments:"Paiements", history:"Historique", activation:"Activation", settings:"Paramètres" }; 
+
+document.querySelectorAll(".nav-item").forEach(item=>{ 
+  item.addEventListener("click",function(){ 
+    this.classList.remove("icon-spin"); void this.offsetWidth; this.classList.add("icon-spin"); 
+    showPage(this.dataset.page); 
+  }); 
+}); 
+
+function showPage(page){ 
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active")); 
+  const target=document.getElementById(page); if(target)target.classList.add("active"); 
+  document.querySelectorAll(".nav-item").forEach(item=>{ item.classList.toggle("active",item.dataset.page===page); }); 
+  document.getElementById("topTitle").textContent=titles[page]||"Dashboard"; 
+  document.getElementById("sidebar").classList.remove("open"); 
+} 
+
+document.getElementById("menuBtn").addEventListener("click",()=>{ document.getElementById("sidebar").classList.toggle("open"); }); 
+
+function updateClock(){ document.getElementById("liveClock").textContent=new Date().toLocaleTimeString("fr-FR"); } 
+setInterval(updateClock,1000); updateClock(); 
+
+function renderStats(){ 
+  const due=clients.reduce((sum,c)=>sum+Number(c.totalDue||0),0); 
+  const paid=clients.reduce((sum,c)=>sum+Number(c.totalPaid||0),0); 
+  const remain=clients.reduce((sum,c)=>sum+Math.max(0,Number(c.totalDue||0)-Number(c.totalPaid||0)),0); 
+  document.getElementById("statClients").textContent=clients.length; 
+  document.getElementById("statDue").textContent=money(due); 
+  document.getElementById("statPaid").textContent=money(paid); 
+  document.getElementById("statRemain").textContent=money(remain); 
+} 
+
+function clientStatus(client){ 
+  const due=Number(client.totalDue||0); const paid=Number(client.totalPaid||0); const remain=Math.max(0,due-paid); 
+  if(due<=0) return{text:"Aucun solde",cls:"badge-green"}; 
+  if(remain<=0) return{text:"Payé",cls:"badge-green"}; 
+  return{text:"Reste",cls:"badge-orange"}; 
+} 
+
+function renderDashboard(){ 
+  const body=document.getElementById("dashboardTable"); 
+  const recent=[...clients].sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,5); 
+  if(!recent.length){ body.innerHTML=`<tr><td colspan="4"><div class="empty">Aucun client</div></td></tr>`; return; } 
+  body.innerHTML=recent.map(client=>{ 
+    const status=clientStatus(client); 
+    const remain=Math.max(0,Number(client.totalDue||0)-Number(client.totalPaid||0)); 
+    return`<tr><td><div class="client-cell"><span class="avatar">${client.avatar?`<img src="${client.avatar}">`:escapeHtml(initials(client.name))}</span><strong>${escapeHtml(client.name)}</strong></div></td><td>${escapeHtml(client.account||"-")}</td><td><span class="badge ${status.cls}">${status.text}</span></td><td>${money(remain)}</td></tr>`; 
+  }).join(""); 
+} 
+
+function renderClients(){ 
+  const search=document.getElementById("clientSearch").value.trim().toLowerCase(); 
+  const list=clients.filter(c=>String(c.name||"").toLowerCase().includes(search)||String(c.account||"").toLowerCase().includes(search)||String(c.phone||"").toLowerCase().includes(search)); 
+  document.getElementById("clientCountText").textContent=clients.length+" clients"; 
+  const body=document.getElementById("clientsTable"); 
+  if(!list.length){ body.innerHTML=`<tr><td colspan="9"><div class="empty">Aucun client trouvé</div></td></tr>`; return; } 
+  body.innerHTML=list.map(c=>{ 
+    const due=Number(c.totalDue||0); const paid=Number(c.totalPaid||0); const remain=Math.max(0,due-paid); 
+    const status=clientStatus(c); 
+    return`<tr><td><div class="client-cell"><span class="avatar">${c.avatar?`<img src="${c.avatar}">`:escapeHtml(initials(c.name))}</span><strong>${escapeHtml(c.name)}</strong></div></td><td>${escapeHtml(c.account||"-")}</td><td><span class="badge badge-blue">${escapeHtml(c.year||currentYear())}</span></td><td><code>${escapeHtml(c.phone||"+212000000000")}</code></td><td>${money(due)}</td><td>${money(paid)}</td><td>${money(remain)}</td><td><span class="badge ${status.cls}">${status.text}</span></td><td><div class="actions"><button class="btn btn-dark btn-small" onclick="viewClient('${c.id}')">👁</button><button class="btn btn-blue btn-small" onclick="openDebtModal('${c.id}')">＋</button><button class="btn btn-lime btn-small" onclick="openPaymentModal('${c.id}')">💳</button><button class="btn btn-dark btn-small" onclick="editClient('${c.id}')">✎</button><button class="btn btn-dark btn-small" onclick="openClientInvoice('${c.id}')">🧾</button><button class="btn btn-danger btn-small" onclick="deleteClientDirect('${c.id}')">🗑</button></div></td></tr>`; 
+  }).join(""); 
+} 
+
+function openClientModal(){ 
+  document.getElementById("editClientId").value=""; 
+  document.getElementById("clientName").value=""; 
+  document.getElementById("clientPhone").value=""; 
+  document.getElementById("clientYear").value=currentYear(); 
+  document.getElementById("clientAccount").value=""; 
+  document.getElementById("clientModalTitle").textContent="Nouveau client"; 
+  document.getElementById("deleteClientModalBtn").style.display="none"; 
+  openModal("clientModal"); 
+} 
+
+function editClient(clientId){ 
+  const client=getClient(clientId); if(!client)return; 
+  document.getElementById("editClientId").value=client.id; 
+  document.getElementById("clientName").value=client.name||""; 
+  document.getElementById("clientPhone").value=client.phone||""; 
+  document.getElementById("clientYear").value=client.year||currentYear(); 
+  document.getElementById("clientAccount").value=client.account||""; 
+  document.getElementById("clientModalTitle").textContent="Modifier le client"; 
+  document.getElementById("deleteClientModalBtn").style.display="inline-flex"; 
+  openModal("clientModal"); 
+} 
+
+function saveClient(){ 
+  const editId=document.getElementById("editClientId").value; 
+  const name=document.getElementById("clientName").value.trim(); 
+  let phone=document.getElementById("clientPhone").value.trim()||"+212000000000"; 
+  const year=document.getElementById("clientYear").value.trim()||currentYear(); 
+  const account=document.getElementById("clientAccount").value.trim(); 
+  if(!name){ toast("Veuillez entrer le nom"); return; } 
+  if(editId){ 
+    const client=getClient(editId); 
+    if(client){ client.name=name; client.phone=phone; client.year=year; client.account=account; } 
+    toast("Client modifié"); 
+  }else{ 
+    clients.unshift({id:makeId(),name,phone,year,account,totalDue:0,totalPaid:0,date:now(),agent:clientProfile.name}); 
+    toast("Client ajouté"); 
+  } 
+  saveData(); closeModal("clientModal"); renderAll(); 
+} 
+
+function deleteClientDirect(id){
+  const client=getClient(id); if(!client)return; 
+  if(!confirm(`Supprimer "${client.name}" ?`))return;
+  clients=clients.filter(c=>c.id!==id); 
+  payments=payments.filter(p=>p.clientId!==id); 
+  transactions=transactions.filter(t=>t.clientId!==id); 
+  abonnements=abonnements.filter(a=>a.clientId!==id); 
+  activations=activations.filter(act=>act.clientId!==id);
+  saveData(); renderAll(); toast("Client supprimé");
+} 
+
+function deleteCurrentClient(){ deleteClientDirect(document.getElementById("editClientId").value); closeModal("clientModal"); } 
+
+function viewClient(id){ 
+  const c=getClient(id); if(!c)return; 
+  const remain=Math.max(0,Number(c.totalDue||0)-Number(c.totalPaid||0)); 
+  document.getElementById("clientDetailTitle").textContent = `Dossier: ${c.name}`;
+  let html = `<div class="form-grid" style="margin-bottom:10px;"><div class="form-group"><label>Nom</label><div class="input">${escapeHtml(c.name)}</div></div><div class="form-group"><label>WhatsApp</label><div class="input">${escapeHtml(c.phone)}</div></div></div>`;
+  document.getElementById("detailBody").innerHTML = html; openModal("detailModal"); 
+} 
+
+function openDebtModal(id){ 
+  document.getElementById("debtClientId").value=id; 
+  document.getElementById("debtAmount").value=""; 
+  selectCustomOption('debtProduct', 'None', ''); 
+  document.getElementById("debtNote").value=""; 
+  openModal("debtModal"); 
+} 
+
+function saveDebt(){ 
+  const id=document.getElementById("debtClientId").value; 
+  const amount=Number(document.getElementById("debtAmount").value); 
+  const product=document.getElementById("debtProduct").value.trim()||"None"; 
+  const c=getClient(id); if(!c||amount<=0){ toast("Montant invalide"); return; } 
+  c.totalDue=Number(c.totalDue||0)+amount; 
+  const transObj={id:makeId(),clientId:id,name:c.name,type:"Dette",amount,paidAmount:0,device:"None",product,note:document.getElementById("debtNote").value.trim(),date:now(),agent:clientProfile.name, currency: activeCurrency.symbol};
+  transactions.unshift(transObj); saveData(); closeModal("debtModal"); renderAll(); toast("Ajouté & Facturé"); 
+  openDebtReceipt(transObj.id);
+} 
+
+function openPaymentModal(clientId=""){ 
+  const select=document.getElementById("paymentClient"); 
+  select.innerHTML=`<option value="">Sélectionner un client</option>`+clients.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join(""); 
+  select.value=clientId||""; document.getElementById("paymentClientId").value=clientId||""; 
+  document.getElementById("paymentAmount").value=""; selectCustomOption('paymentProduct', 'None', ''); 
+  document.getElementById("paymentNote").value=""; openModal("paymentModal"); 
+} 
+
+function savePayment(){ 
+  const id=document.getElementById("paymentClient").value; 
+  const amount=Number(document.getElementById("paymentAmount").value); 
+  const product=document.getElementById("paymentProduct").value.trim()||"None"; 
+  const c=getClient(id); if(!c||amount<=0){ toast("Montant invalide"); return; } 
+  c.totalPaid=Number(c.totalPaid||0)+amount; 
+  const payObj={id:makeId(),clientId:id,name:c.name,amount,device:"None",product,note:document.getElementById("paymentNote").value.trim(),date:now(),agent:clientProfile.name, currency: activeCurrency.symbol};
+  payments.unshift(payObj); 
+  transactions.unshift({id:makeId(),clientId:id,type:"Paiement",amount,paidAmount:amount,device:"None",product,note:payObj.note,date:now(),agent:clientProfile.name, currency: activeCurrency.symbol}); 
+  saveData(); closeModal("paymentModal"); renderAll(); toast("Paiement enregistré"); 
+  openPaymentReceipt(payObj.id);
+} 
+
+function renderPayments(){ 
+  const body=document.getElementById("paymentsTable"); 
+  if(!payments.length){ body.innerHTML=`<tr><td colspan="6"><div class="empty">Aucun paiement</div></td></tr>`; return; } 
+  body.innerHTML=payments.map(p=>`<tr><td>${escapeHtml(p.date)}</td><td><strong>${escapeHtml(p.name)}</strong></td><td><span class="badge badge-lime">${escapeHtml(p.product||'None')}</span></td><td><span class="badge badge-green">+${money(p.amount)}</span></td><td>${escapeHtml(p.note||"-")}</td><td><button class="btn btn-dark btn-small" onclick="openPaymentReceipt('${p.id}')">🧾</button></td></tr>`).join(""); 
+} 
+
+function addHistory(title,details){ historyData.unshift({id:makeId(),title,details,date:now(),agent:clientProfile.name}); historyData=historyData.slice(0,100); } 
+function renderHistory(){ 
+  const box=document.getElementById("historyList"); 
+  if(!historyData.length){ box.innerHTML=`<div class="empty">Aucun historique</div>`; return; } 
+  box.innerHTML=historyData.map(h=>`<div class="history-item"><div class="history-dot">✓</div><div class="history-info"><strong>${escapeHtml(h.title)}</strong><span>${escapeHtml(h.details||"")} • ${escapeHtml(h.date)}</span></div></div>`).join(""); 
+} 
+
+function abonnementToday(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; } 
+function calcExpiration(startDate,duration){ 
+  if(!startDate) startDate = abonnementToday();
+  if(duration==="Lifetime") return "Lifetime";
+  const d=new Date(startDate+"T00:00:00"); 
+  if(duration==="1 mois") d.setMonth(d.getMonth()+1); 
+  if(duration==="12 mois") d.setFullYear(d.getFullYear()+1); 
+  return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`; 
+} 
+
+function fillAbonnementClients(){ 
+  const select=document.getElementById("abonnementClient"); 
+  select.innerHTML=`<option value="">Sélectionner un client</option>`+clients.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} (Compte: ${escapeHtml(c.account||'-')})</option>`).join(""); 
+} 
+
+function onAbonnementClientSelectChange(){
+  const clientId = document.getElementById("abonnementClient").value;
+  const c = getClient(clientId);
+  if(c) {
+    document.getElementById("abonnementName").value = c.name || "";
+    if(c.account) document.getElementById("abonnementUsername").value = c.account;
+    toast(`📡 تم جلب بيانات العميل: ${c.name}`);
+  }
+}
+
+function autoConvertM3U(showMessage=false){ 
+  const input=document.getElementById("abonnementM3U"); const status=document.getElementById("m3uStatus"); 
+  if(!input||!status) return false; const value=input.value.trim(); 
+  if(!value){ status.className="m3u-status"; status.textContent="Collez le lien M3U..."; return false; } 
+  try{ 
+    const parsed=new URL(value); 
+    let username=parsed.searchParams.get("username")||parsed.searchParams.get("user")||""; 
+    let password=parsed.searchParams.get("password")||parsed.searchParams.get("pass")||""; 
+    let expParam=parsed.searchParams.get("exp_date")||parsed.searchParams.get("expiry")||""; 
+    const server=parsed.origin; 
+    if(username&&password){ 
+      document.getElementById("abonnementServer").value=server; 
+      document.getElementById("abonnementUsername").value=username; 
+      document.getElementById("abonnementPassword").value=password; 
+
+      if(expParam) {
+        let expiryDateStr = "";
+        let timestamp = Number(expParam);
+        if(!isNaN(timestamp) && timestamp > 100000) {
+          let dateObj = new Date(timestamp < 10000000000 ? timestamp * 1000 : timestamp);
+          expiryDateStr = `${String(dateObj.getDate()).padStart(2,"0")}/${String(dateObj.getMonth()+1).padStart(2,"0")}/${dateObj.getFullYear()}`;
+        } else {
+          expiryDateStr = expParam;
+        }
+        document.getElementById("abonnementExpiryManual").value = expiryDateStr;
+        document.getElementById("abonnementDuration").value = "Custom";
+        status.className="m3u-status m3u-success"; 
+        status.innerHTML=`✓ M3U détecté • Validité : <strong style="color:var(--lime)">${expiryDateStr}</strong>`;
+        return true;
+      }
+
+      status.className="m3u-status m3u-success"; status.innerHTML=`✓ M3U détecté`; return true; 
+    } 
+    status.className="m3u-status m3u-warning"; status.textContent="⚠ Données incomplètes"; return false; 
+  }catch(e){ status.className="m3u-status m3u-error"; status.textContent="⚠ Lien invalide"; return false; } 
+} 
+
+function createAbonnement(){ 
+  const m3uUrl=document.getElementById("abonnementM3U").value.trim(); 
+  if(m3uUrl && !autoConvertM3U(true)) return; 
+  const name=document.getElementById("abonnementName").value.trim(); 
+  const server=document.getElementById("abonnementServer").value.trim(); 
+  const username=document.getElementById("abonnementUsername").value.trim(); 
+  const password=document.getElementById("abonnementPassword").value.trim(); 
+  if(!name || !server || !username){ toast("Remplissez les champs obligatoires"); return; } 
+  
+  let clientId = document.getElementById("abonnementClient").value || clients.find(c=>c.name.toLowerCase()===name.toLowerCase())?.id;
+  if(!clientId){
+    let newC = {id:makeId(), name, phone:"+212000000000", year:currentYear(), account:username, totalDue:0, totalPaid:0, date:now(), agent:clientProfile.name};
+    clients.unshift(newC); clientId = newC.id;
+  } else {
+    let cObj = getClient(clientId);
+    if(cObj && !cObj.account) cObj.account = username;
+  }
+  const app = document.getElementById("abonnementApp").value||"None";
+  const duration = document.getElementById("abonnementDuration").value;
+  let manualExpiry = document.getElementById("abonnementExpiryManual").value.trim();
+  const expiration = manualExpiry || calcExpiration(document.getElementById("abonnementStart").value, duration);
+  const price = Number(document.getElementById("abonnementPrice").value)||0;
+
+  if(price>0){
+    let cObj=getClient(clientId);
+    if(cObj){ cObj.totalDue+=price; cObj.totalPaid+=price; transactions.unshift({id:makeId(),clientId,type:"Abonnement",amount:price,paidAmount:price,device:"None",product:app,note:`Abonnement Xtream (Exp: ${expiration})`,date:now(),agent:clientProfile.name, currency: activeCurrency.symbol}); }
+  }
+
+  const abonnement={ id:makeId(), date:now(), clientId, name, app, server, username, password, duration, expiration, price, status:"Actif", agent:clientProfile.name, currency: activeCurrency.symbol }; 
+  abonnements.unshift(abonnement); saveData(); renderAll(); toast("Abonnement créé"); 
+  openAbonnementReceipt(abonnement.id);
+} 
+
+function renderAbonnements(){ 
+  document.getElementById("abonnementCount").textContent=abonnements.length; 
+  const body=document.getElementById("abonnementTable"); 
+  if(!abonnements.length){ body.innerHTML=`<tr><td colspan="7"><div class="empty">Aucun abonnement</div></td></tr>`; return; } 
+  body.innerHTML=abonnements.map(a=>`<tr><td>${escapeHtml(a.date)}</td><td><strong>${escapeHtml(a.name)}</strong></td><td><span class="badge badge-lime">${escapeHtml(a.app||'None')}</span></td><td>📡 Xtream</td><td>${escapeHtml(a.duration)}</td><td><span style="color:var(--lime); font-weight:bold;">${escapeHtml(a.expiration)}</span></td><td><button class="btn btn-dark btn-small" onclick="openAbonnementReceipt('${a.id}')">🧾</button></td></tr>`).join(""); 
+} 
+
+function fillActivationClients(){ 
+  const select=document.getElementById("activationClient"); 
+  select.innerHTML=`<option value="">Sélectionner un client</option>`+clients.map(c=>`<option value="${c.id}">${escapeHtml(c.name)} (WhatsApp: ${escapeHtml(c.phone||'-')})</option>`).join(""); 
+} 
+
+function onActivationClientSelectChange(){
+  const clientId = document.getElementById("activationClient").value;
+  const c = getClient(clientId);
+  if(c) {
+    document.getElementById("activationName").value = c.name || "";
+    if(c.phone) document.getElementById("activationPhone").value = c.phone;
+    toast(`⚡ تم اختيار العميل: ${c.name}`);
+  }
+}
+
+function createActivation(){ 
+  const name=document.getElementById("activationName").value.trim(); 
+  const mac=document.getElementById("activationMac").value.trim(); 
+  if(!name || !mac){ toast("Remplissez le nom et la MAC"); return; } 
+  
+  let clientId = document.getElementById("activationClient").value || clients[0]?.id;
+  const app = document.getElementById("activationApp").value||"None";
+  const price = Number(document.getElementById("activationPrice").value)||0;
+  
+  if(price>0 && clientId){
+    let cObj = getClient(clientId);
+    if(cObj){ cObj.totalDue+=price; cObj.totalPaid+=price; }
+  }
+
+  const activation={ id:makeId(), date:now(), name, mac, app, price, status:"Activé", agent:clientProfile.name, currency: activeCurrency.symbol }; 
+  activations.unshift(activation); saveData(); renderAll(); toast("Activation créée"); 
+  openActivationReceipt(activation.id);
+} 
+
+function renderActivations(){ 
+  document.getElementById("activationCount").textContent=activations.length; 
+  const body=document.getElementById("activationTable"); 
+  if(!activations.length){ body.innerHTML=`<tr><td colspan="7"><div class="empty">Aucune activation</div></td></tr>`; return; } 
+  body.innerHTML=activations.map(a=>`<tr><td>${escapeHtml(a.date)}</td><td><strong>${escapeHtml(a.name)}</strong></td><td><code>${escapeHtml(a.mac)}</code></td><td><span class="badge badge-lime">${escapeHtml(a.app)}</span></td><td><span class="badge badge-green">${escapeHtml(a.status)}</span></td><td><button class="btn btn-lime btn-small" onclick="openActivationReceipt('${a.id}')">🧾</button></td></tr>`).join(""); 
+} 
+
+function generateInvoiceHTML(itemType, itemData, clientData, priceVal) {
+  let targetClientId = itemData.clientId || clientData.id;
+  let clientObj = targetClientId ? getClient(targetClientId) : null;
+  let clientName = itemData.name || (clientObj ? clientObj.name : 'Client');
+  let clientPhone = clientObj ? clientObj.phone : '+212000000000';
+  let invoiceId = "#" + (itemData.id || 'FAOCBK').slice(-6).toUpperCase();
+  let invoiceDate = itemData.date || now();
+  
+  let totalDueVal = clientObj ? Number(clientObj.totalDue||0) : Number(priceVal||0);
+  let totalPaidVal = clientObj ? Number(clientObj.totalPaid||0) : Number(itemData.paidAmount!==undefined?itemData.paidAmount:priceVal);
+  let resteVal = Math.max(0, totalDueVal - totalPaidVal);
+
+  let rowsHTML = "";
+
+  if (itemData.deviceQuantities) {
+    for (let k in itemData.deviceQuantities) {
+      let qty = itemData.deviceQuantities[k];
+      let pU = itemData.devicePrices[k] || 0;
+      let lineTotal = qty * pU;
+      let dImg = getDeviceLogo(k);
+      
+      rowsHTML += `
+        <tr>
+          <td>
+            <div class="invoice-app-cell">
+              <div class="invoice-images-group">
+                ${dImg ? `<img src="${dImg}" class="invoice-product-image">` : ''}
+              </div>
+              <div>
+                <strong style="color:#1e40af; font-size:10px;">${escapeHtml(k)}</strong><br>
+                <span style="font-size:7.5px; color:#64748b;">🕒 ${invoiceDate}</span><br>
+                <span style="font-size:7.5px; color:#334155;">📝 ${escapeHtml(itemData.note || 'Achat direct')}</span>
+              </div>
+            </div>
+          </td>
+          <td style="font-weight:bold; text-align:center;">${qty}</td>
+          <td style="text-align:center;">${pU} ${activeCurrency.symbol}</td>
+          <td style="font-weight:bold; text-align:right;">${lineTotal} ${activeCurrency.symbol}</td>
+        </tr>
+      `;
+    }
+  } else {
+    let title = itemData.product || itemData.device || itemData.app || 'Service Panel';
+    let pU = Number(priceVal || 0);
+    let logoUrl = getLogo(itemData.product) || getDeviceLogo(itemData.device) || getLogo(itemData.app);
+    let extraDetail = itemData.expiration ? `Validité / Exp: ${itemData.expiration}` : (itemData.note || itemData.status || 'Service');
+
+    rowsHTML += `
+      <tr>
+        <td>
+          <div class="invoice-app-cell">
+            <div class="invoice-images-group">
+              ${logoUrl ? `<img src="${logoUrl}" class="invoice-product-image">` : ''}
+            </div>
+            <div>
+              <strong style="color:#1e40af; font-size:10px;">${escapeHtml(title)}</strong><br>
+              <span style="font-size:7.5px; color:#64748b;">🕒 ${invoiceDate}</span><br>
+              <span style="font-size:7.5px; color:#1e40af; font-weight:bold;">⏳ ${escapeHtml(extraDetail)}</span>
+            </div>
+          </div>
+        </td>
+        <td style="font-weight:bold; text-align:center;">1</td>
+        <td style="text-align:center;">${pU} ${activeCurrency.symbol}</td>
+        <td style="font-weight:bold; text-align:right;">${pU} ${activeCurrency.symbol}</td>
+      </tr>
+    `;
+  }
+
+  return `
+    <div class="sofiane-invoice">
+      <div class="sofiane-top-section">
+        <div class="sofiane-logo-area">
+          <img src="${clientProfile.logo}" class="sofiane-brand-logo-img">
+          <div>
+            <div class="sofiane-brand-main">${clientProfile.name}</div>
+            <div class="sofiane-brand-sub">Toujours à votre service</div>
+          </div>
+        </div>
+        <div class="sofiane-contacts-stack">
+          <div class="sofiane-contact-pill">📞 ${clientProfile.phone}</div>
+          <div class="sofiane-contact-pill">✉️ ${clientProfile.gmail}</div>
+          <div class="sofiane-contact-pill">📍 ${clientProfile.address}</div>
+          <div class="whatsapp-glass-pill-top">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="whatsapp-mini-icon">
+            ${clientProfile.whatsapp}
+          </div>
+        </div>
+      </div>
+
+      <div class="sofiane-title-bar">FACTURE</div>
+
+      <table class="sofiane-meta-table">
+        <tr>
+          <td class="label-cell">N° facture :</td>
+          <td class="val-cell">${invoiceId}</td>
+          <td class="label-cell">Client :</td>
+          <td class="val-cell" style="font-weight:900; color:#1e40af;">${escapeHtml(clientName)}</td>
+        </tr>
+        <tr>
+          <td class="label-cell">Date & Heure :</td>
+          <td class="val-cell" style="font-size:7.5px;">${invoiceDate}</td>
+          <td class="label-cell">WhatsApp :</td>
+          <td class="val-cell" style="font-size:8px;">📱 ${escapeHtml(clientPhone)}</td>
+        </tr>
+      </table>
+
+      <div style="background:#2563eb; color:#fff; text-align:center; padding:5px; font-size:10px; font-weight:900; border-radius:6px; margin:4px 0;">
+        DÉSIGNATION & QUANTITÉS
+      </div>
+
+      <table class="sofiane-table">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding-left:6px;">Désignation & Détails</th>
+            <th style="text-align:center;">Qté</th>
+            <th style="text-align:center;">P.U</th>
+            <th style="text-align:right; padding-right:6px;">Total</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHTML}</tbody>
+      </table>
+
+      <div style="font-size:8.5px; color:#334155; margin-top:4px; font-weight:bold;">
+        💳 Paiement<br>
+        <span style="color:#64748b; font-weight:normal;">${escapeHtml(itemData.paymentMethod || 'Espèces / Virement')}</span>
+      </div>
+
+      <div class="sofiane-summary-box">
+        <div class="sofiane-sum-row"><span>Sous-total :</span> <span style="color:#334155;">${Number(totalDueVal||0).toLocaleString()} ${activeCurrency.symbol}</span></div>
+        <div class="sofiane-sum-row sofiane-sum-highlight"><span>Total (${activeCurrency.symbol}) :</span> <span style="color:#854d0e;">${Number(totalDueVal||0).toLocaleString()} ${activeCurrency.symbol}</span></div>
+        <div class="sofiane-sum-row"><span>Payé :</span> <span style="color:#16a34a;">${Number(totalPaidVal||0).toLocaleString()} ${activeCurrency.symbol}</span></div>
+        <div class="sofiane-sum-row"><span>Reste :</span> <span style="color:#dc2626;">${Number(resteVal||0).toLocaleString()} ${activeCurrency.symbol}</span></div>
+      </div>
+
+      <div class="sofiane-footer-container">
+        <div class="sofiane-thank-luxury">
+          <div class="sofiane-thank-banner">
+            <div class="sofiane-thank-title">★ MERCI POUR VOTRE CONFIANCE ★</div>
+            <div style="font-size:7px; color:#64748b; margin-top:1px;">Au plaisir de vous servir à nouveau.</div>
+          </div>
+        </div>
+        <div class="sofiane-right-signature-block">
+          <div class="sofiane-sign-label-top">DIRECTION / SIGNATURE</div>
+          <div class="sofiane-official-seal" style="border-radius: 100% !important;">
+            <div class="seal-circle-inner" style="border-radius: 100% !important;">
+              <svg class="seal-svg-text" viewBox="0 0 100 100">
+                <defs><path id="circlePathTop" d="M 10,50 a 40,40 0 0,1 80,0"/></defs>
+                <text font-size="9" font-weight="900" fill="#1e40af"><textPath href="#circlePathTop" startOffset="50%" text-anchor="middle">${clientProfile.name.toUpperCase()}</textPath></text>
+              </svg>
+              <img src="${clientProfile.logo}" class="seal-center-img" style="border-radius: 100% !important;">
+              <svg class="seal-signature-overlay" viewBox="0 0 145 42" fill="none">
+                <text x="6" y="14" font-family="cursive" font-size="16" font-weight="bold" fill="#1d4ed8">${clientProfile.signature}</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function openActivationReceipt(id){ document.getElementById("receiptBody").innerHTML = generateInvoiceHTML('activation', activations.find(x=>x.id===id), {}, Number(activations.find(x=>x.id===id).price||0)); openModal("receiptModal"); } 
+function openAbonnementReceipt(id){ document.getElementById("receiptBody").innerHTML = generateInvoiceHTML('abonnement', abonnements.find(x=>x.id===id), {}, Number(abonnements.find(x=>x.id===id).price||0)); openModal("receiptModal"); } 
+function openPaymentReceipt(id){ document.getElementById("receiptBody").innerHTML = generateInvoiceHTML('payment', payments.find(x=>x.id===id), {}, Number(payments.find(x=>x.id===id).amount||0)); openModal("receiptModal"); }
+function openDebtReceipt(id){ document.getElementById("receiptBody").innerHTML = generateInvoiceHTML('debt', transactions.find(x=>x.id===id), {}, Number(transactions.find(x=>x.id===id).amount||0)); openModal("receiptModal"); }
+function openClientInvoice(id){ document.getElementById("receiptBody").innerHTML = generateInvoiceHTML('client', getClient(id), getClient(id), Number(getClient(id).totalDue||0)); openModal("receiptModal"); } 
+
+function openModal(id){ document.getElementById(id).classList.add("show"); } 
+function closeModal(id){ document.getElementById(id).classList.remove("show"); } 
+
+let toastTimer; 
+function toast(message){ 
+  const box=document.getElementById("toast"); box.textContent=message; box.classList.add("show"); 
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>{ box.classList.remove("show"); },2500); 
+} 
+
+function exportData(){ 
+  const blob=new Blob([JSON.stringify({clients,payments,history:historyData,transactions,activations,abonnements, currency: activeCurrency, language: activeLanguage, suspendedCodes: getSuspendedCodes()},null,2)],{type:"application/json"}); 
+  const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="backup.json"; a.click(); 
+  toast("📥 تم تصدير البيانات بنجاح");
+  closeModal('backupManagerModal');
+} 
+
+function handleFileImport(e) {
+  let file = e.target.files[0];
+  if(!file) return;
+  let reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      let data = JSON.parse(evt.target.result);
+      if(data) {
+        if(data.clients) clients = data.clients;
+        if(data.payments) payments = data.payments;
+        if(data.history) historyData = data.history;
+        if(data.transactions) transactions = data.transactions;
+        if(data.activations) activations = data.activations;
+        if(data.abonnements) abonnements = data.abonnements;
+        if(data.currency) {
+          activeCurrency = data.currency;
+          updateCurrencyLabels();
+        }
+        if(data.language) {
+          changeActiveLanguage(data.language);
+        }
+        if(data.suspendedCodes) {
+          saveSuspendedCodes(data.suspendedCodes);
+        }
+        saveData();
+        renderAll();
+        renderCurrencySelectorGrids();
+        renderLanguageSelectorGrids();
+        toast("📤 تم استيراد وتحديث البيانات بنجاح!");
+      }
+    } catch(err) {
+      alert("ملف غير صالح أو تالف!");
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+}
+
+const def_search = document.getElementById("clientSearch");
+if(def_search) def_search.addEventListener("input",renderClients); 
+
+function renderAll(){ 
+  renderDeviceCatalogGrid(); renderStats(); renderDashboard(); renderClients(); 
+  renderPayments(); renderHistory(); fillActivationClients(); renderActivations(); 
+  fillAbonnementClients(); renderAbonnements(); fillDeviceClientDropdowns();
+  renderSuspendedCodesTable();
+  renderCurrencySelectorGrids();
+  renderLanguageSelectorGrids();
+} 
+
+detectUserCountryAndCurrency();
+</script>
+</body>
+</html>
