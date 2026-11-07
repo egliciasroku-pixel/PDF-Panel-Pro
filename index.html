@@ -1497,9 +1497,9 @@ let clientProfile = {
 function getSuspendedCodes() {
   try {
     let list = JSON.parse(localStorage.getItem("credits_panel_suspended_codes") || "[]");
-    // التأكد من إضافة كود "Racit" المحظور افتراضياً بناءً على طلبك
-    const defaultSuspendedCode = "KEY_eyJuIjoiUmFjaWQiLCJlIjoiMDQvMDIvMjAyNyIsInAiOiIwNjQ0Njc0NTY3IiwidyI6IsKxMjEyNjMwNDczNDk4IiwiZyI6ImVnbGljaWFzcm9rdUBnbWFpbC5jb20iLCJsIjoiaHR0cHM6Ly9pLmliYi5jby8zeTZTOGs0Qy8xNzkyMTYzNzMzODc4LmpwZyLessonsiOiJSYWNpZCIsImEiOiLYs9mE2Kct2KfZhNmI2KfYryJ9";
-    if (!list.some(item => cleanCodeFormat(item.code) === cleanCodeFormat(defaultSuspendedCode))) {
+    const defaultSuspendedCode = "KEY_eyJuIjoiUmFjaWQiLCJlIjoiMDQvMDIvMjAyNyIsInAiOiIwNjQ0Njc0NTY3IiwidyI6IsKxMjEyNjMwNDczNDk4IiwiZyI6ImVnbGljaWFzcm9rdUBnbWFpbC5jb20iLCJsIjoiaHR0cHM6Ly9pLmliYi5jby8zeTZTOGs0Qy8xNzkyMTYzNzMzODc4LmpwZyIsIiwicyI6IlJhY2lkIiwiYQ==.yJ9";
+    // إضافة الكود المحظور الافتراضي (Racit) مباشرة للقائمة إن لم يكن موجوداً
+    if (!list.some(item => cleanCodeFormat(item.code) === cleanCodeFormat(defaultSuspendedCode) || item.code.includes("Racit") || item.code.includes("UmFjaWQi))) {
       list.unshift({ code: defaultSuspendedCode, date: "System Default" });
     }
     return list;
@@ -1512,15 +1512,32 @@ function saveSuspendedCodes(list) {
   localStorage.setItem("credits_panel_suspended_codes", JSON.stringify(list));
 }
 
+// دالة تنظيف ومطابقة الأكواد بدقة تامة (تزيل بادئة KEY_، الفراغات، وتقارن المحتوى الفعلي)
 function cleanCodeFormat(code) {
-  return String(code || "").trim().replace(/^KEY_/, "");
+  if (!code) return "";
+  let clean = String(code).trim();
+  if (clean.startsWith("KEY_")) {
+    clean = clean.substring(4);
+  }
+  return clean.trim();
 }
 
 function isCodeSuspended(codeInput) {
   const cleanInput = cleanCodeFormat(codeInput);
   if (!cleanInput) return false;
   const suspendedList = getSuspendedCodes();
-  return suspendedList.some(item => cleanCodeFormat(item.code) === cleanInput);
+  return suspendedList.some(item => {
+    let itemClean = cleanCodeFormat(item.code);
+    return itemClean === cleanInput || item.code.trim() === codeInput.trim() || atobSafe(itemClean) === atobSafe(cleanInput);
+  });
+}
+
+function atobSafe(str) {
+  try {
+    return atob(str);
+  } catch(e) {
+    return str;
+  }
 }
 
 let pendingSecurityAction = null;
@@ -1531,7 +1548,6 @@ function requestSecurityAction(actionType) {
   openModal('securityPassModal');
 }
 
-// الـ Function المسؤولة عن التحقق من كلمة السر والوصول للميزات الأمنيّة
 function verifySecurityPassword() {
   const passInput = document.getElementById("securityPasswordInput").value.trim();
   const savedKey = localStorage.getItem("saved_auth_key") || "";
@@ -1541,7 +1557,6 @@ function verifySecurityPassword() {
     return;
   }
 
-  // التحقق إما بكلمة السر المخصصة FAROUK@£1987 أو بكود التفعيل المعتمد
   let isPasswordCorrect = (passInput === MASTER_ADMIN_PASSWORD) || (passInput === savedKey);
 
   if (!isPasswordCorrect) {
@@ -1630,8 +1645,9 @@ function authenticateClient(savedKey = null) {
   const input = savedKey || document.getElementById("authPassword").value.trim();
   if(!input) { if(!savedKey) alert("يرجى إدخال كود التفعيل!"); return false; }
 
+  // فحص الحظر بدقة قبل السماح بالدخول
   if (isCodeSuspended(input)) {
-    alert("⚠️ هذا الكود معطل وموقوف حالياً من قبل الإدارة!");
+    alert("⚠️ عذراً، هذا الكود محظور ومعطل من قبل الإدارة!");
     localStorage.removeItem("saved_auth_key");
     document.getElementById("authOverlay").style.display = "flex";
     return false;
@@ -1682,8 +1698,18 @@ function authenticateClient(savedKey = null) {
 window.addEventListener('DOMContentLoaded', () => {
   let savedKey = localStorage.getItem("saved_auth_key");
   if(savedKey) {
-    authenticateClient(savedKey);
+    // التحقق الفوري ما إذا كان الكود المحفوظ قد تم حظره حديثاً لطرده فوراً
+    if (isCodeSuspended(savedKey)) {
+      localStorage.removeItem("saved_auth_key");
+      document.getElementById("authOverlay").style.display = "flex";
+      alert("⚠️ تم حظر هذا الكود وتوقيفه من قبل الإدارة!");
+    } else {
+      authenticateClient(savedKey);
+    }
+  } else {
+    document.getElementById("authOverlay").style.display = "flex";
   }
+
   let savedLang = localStorage.getItem("manual_language_choice");
   if(savedLang) {
     changeActiveLanguage(savedLang);
