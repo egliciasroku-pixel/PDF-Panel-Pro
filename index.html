@@ -64,9 +64,6 @@ html[dir="rtl"] .main { margin-left:0; margin-right:230px; }
 .top-right{ display:flex; align-items:center; gap:8px; } 
 .live-clock{ background:var(--panel); padding:6px 9px; border-radius:9px; color:var(--lime); font-size:10.5px; font-weight:bold; } 
 
-/* ======================================================== */
-/*  مؤشر ONLINE الجديد الاحترافي والراقي (Live Pulse Badge)  */
-/* ======================================================== */
 @keyframes onlinePulseGlow {
   0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(55, 227, 154, 0.7); }
   70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(55, 227, 154, 0); }
@@ -98,7 +95,6 @@ html[dir="rtl"] .main { margin-left:0; margin-right:230px; }
   box-shadow: 0 0 8px var(--green);
 }
 
-/* أزرار سريعة فاخرة في التوب بار (العملات واللغات) */
 .topbar-quick-btn { background: rgba(168,255,0,0.1); border: 1px solid rgba(168,255,0,0.3); color: var(--lime2); padding: 6px 10px; border-radius: 9px; font-size: 10.5px; font-weight: 900; display: flex; align-items: center; gap: 5px; cursor: pointer; transition: 0.2s; }
 .topbar-quick-btn:hover { background: rgba(168,255,0,0.2); box-shadow: 0 0 10px rgba(168,255,0,0.3); }
 
@@ -250,9 +246,6 @@ html[dir="rtl"] .toast { right:auto; left:12px; }
 .toast.show{ transform:translateY(0); opacity:1; } 
 .empty{ padding:25px 10px; text-align:center; color:var(--muted); font-size:11px; } 
 
-/* ======================================================== */
-/*  أنميشن زجاجي وثابت وفاخر للوجو الفاتورة (Glass Glow)   */
-/* ======================================================== */
 @keyframes glassGlowPulse {
   0% {
     box-shadow: 0 0 10px rgba(37, 99, 235, 0.4), inset 0 0 8px rgba(255, 255, 255, 0.4);
@@ -309,13 +302,9 @@ html[dir="rtl"] .sofiane-table th:nth-child(1), html[dir="rtl"] .sofiane-table t
 html[dir="rtl"] .invoice-app-cell { text-align: right; }
 .invoice-images-group { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
 
-/* اللوجو الشخصي يظل دائرياً */
 .invoice-app-logo { width: 32px; height: 32px; object-fit: cover; border-radius: 100% !important; background: #ffffff; padding: 2px; }
-
-/* صور المنتجات والأجهزة تظهر كاملة بمربعات مرتبة (ليست دائرية) */
 .invoice-product-image { width: 42px; height: 42px; object-fit: contain; background: #ffffff; border-radius: 6px; border: 1px solid #e2e8f0; padding: 2px; }
 
-/* التصميم الكلاسيكي الأصلي لصندوق المجاميع */
 .sofiane-summary-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 9.5px; color: #334155; }
 .sofiane-sum-row { display: flex; justify-content: space-between; align-items: center; color: #64748b; font-weight: 600; }
 .sofiane-sum-highlight { background: #fef08a !important; border: 1px solid #fde047; padding: 7px 10px; border-radius: 6px; color: #854d0e; font-weight: 900; font-size: 12px; }
@@ -354,7 +343,7 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
   <div class="auth-box">
     <h2 id="authTitleText">🔐 تفعيل لوحة الإدارة</h2>
     <p id="authDescText">أدخل كود التفعيل الخاص بك للدخول واستمرار الصلاحية</p>
-    <input type="password" id="authPassword" class="auth-input" placeholder="أدخل كود التفعيل هنا (KEY_...)">
+    <input type="password" id="authPassword" class="auth-input" placeholder="أدخل كود التفعيل هنا (KEY_...)" onkeydown="if(event.key==='Enter') authenticateClient()">
     <button class="auth-btn" id="authBtnText" onclick="authenticateClient()">تفعيل ودخول ⚡</button>
   </div>
 </div>
@@ -420,16 +409,13 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
         </div>
       </div>
       <div class="top-right">
-        <!-- زر اللغات السريع الفاخر -->
         <button class="topbar-quick-btn" onclick="openLanguageModal()" title="Changer la langue">
           <span>🌐</span> <span id="quickLangDisplay">FR</span>
         </button>
-        <!-- زر العملات السريع العلوي -->
         <button class="topbar-quick-btn" onclick="openCurrencyModal()" title="Changer la devise">
           <span>💱</span> <span id="quickCurrencyDisplay">DH</span>
         </button>
         <div class="live-clock" id="liveClock">--:--:--</div>
-        <!-- مؤشر ONLINE الجديد الراقي والنابض بالحياة -->
         <div class="online-lux-badge">
           <span class="online-pulse-circle"></span>
           <span>ONLINE</span>
@@ -691,11 +677,12 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
     <div class="page" id="settings">
       <div class="section-head"><div><h2 data-i18n="set_page_title">Paramètres</h2><p data-i18n="set_page_sub">Configuration du panel, Devises & Sécurité</p></div></div>
       
+      <!-- قسم الأمان والحماية بكلمة السر (إدارة الحظر + النسخ الاحتياطي) -->
       <div class="card">
         <div class="card-head"><h3 data-i18n="set_security_title">إدارة النظام والأمان (System & Security)</h3></div>
         <div class="card-body">
           <div class="settings-action-grid">
-            <div class="lux-setting-card danger-card" onclick="openSuspendModal()">
+            <div class="lux-setting-card danger-card" onclick="requestSecurityAction('suspend')">
               <div class="lux-card-top">
                 <div class="lux-card-icon">🚫</div>
                 <div>
@@ -705,7 +692,7 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
               </div>
             </div>
 
-            <div class="lux-setting-card" onclick="openBackupManagerModal()">
+            <div class="lux-setting-card" onclick="requestSecurityAction('backup')">
               <div class="lux-card-top">
                 <div class="lux-card-icon" style="color:var(--blue); background:rgba(85,184,255,0.1);">💾</div>
                 <div>
@@ -719,18 +706,20 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
         </div>
       </div>
 
+      <!-- قسم اللغة المستقل -->
       <div class="card">
         <div class="card-head"><h3 data-i18n="set_lang_title">Gestion de la Langue Active</h3><span class="badge badge-lime">Trilingue</span></div>
         <div class="card-body">
           <div style="display:flex; flex-direction:column; gap:10px; padding:6px 0;">
             <p style="color:var(--muted); font-size:10.5px;" data-i18n="set_lang_desc">اختر لغة العرض المفضلة (Français, English, العربية):</p>
             <button class="topbar-quick-btn" style="width:fit-content; padding:10px 16px; font-size:12px;" onclick="openLanguageModal()">
-              <span>🌐</span> <span>إدارة واختيار لغة النظام النشطة (<span id="settingsLangLabel">FR</span>)</span>
+              <span>🌐</span> <span>إدارة وااختيار لغة النظام النشطة (<span id="settingsLangLabel">FR</span>)</span>
             </button>
           </div>
         </div>
       </div>
 
+      <!-- قسم العملات -->
       <div class="card">
         <div class="card-head"><h3 data-i18n="set_currency_title">Gestion de la Devise Active</h3><span class="badge badge-lime">Devises Internationales</span></div>
         <div class="card-body">
@@ -781,6 +770,21 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
   </div>
 </div>
 
+<!-- نافذة التحقق من كلمة السر للوصول لإعدادات الأمان -->
+<div class="modal" id="securityPassModal">
+  <div class="modal-box" style="max-width:360px; text-align:center;">
+    <div class="modal-head">
+      <h3 style="color:var(--lime);">🔒 التحقق من كلمة السر</h3>
+      <button class="close" onclick="closeModal('securityPassModal')">×</button>
+    </div>
+    <div class="modal-body" style="padding:15px; display:flex; flex-direction:column; gap:10px;">
+      <p style="color:var(--muted); font-size:10.5px;">أدخل كلمة السر أو كود التفعيل للوصول إلى الإعدادات الحساسة:</p>
+      <input type="password" id="securityPasswordInput" class="auth-input" placeholder="أدخل كلمة السر هنا..." onkeydown="if(event.key==='Enter') verifySecurityPassword()">
+      <button class="btn btn-lime" style="width:100%; padding:10px;" onclick="verifySecurityPassword()">تأكيد ودخول ⚡</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="suspendModal">
   <div class="modal-box" style="max-width:450px;">
     <div class="modal-head">
@@ -793,7 +797,7 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
       </p>
       <div class="form-grid" style="margin-bottom:14px;">
         <div class="form-group full" style="display:flex; flex-direction:row; gap:6px;">
-          <input type="text" id="suspendCodeInput" class="input" placeholder="أدخل كود التفعيل هنا (KEY_...)" style="flex:1;">
+          <input type="text" id="suspendCodeInput" class="input" placeholder="أدخل كود التفعيل هنا (KEY_...)" style="flex:1;" onkeydown="if(event.key==='Enter') suspendClientCode()">
           <button class="btn btn-danger" onclick="suspendClientCode()" style="padding:0 15px;">حظر 🚫</button>
         </div>
       </div>
@@ -815,7 +819,7 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-dark" onclick="closeModal('suspendModal')">إغلاق</button>
+      <button class="btn btn-dark" onclick="closeModal('suspendModal')">إغلاق 🔒</button>
     </div>
   </div>
 </div>
@@ -838,7 +842,7 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
       </button>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-dark" style="width:100%;" onclick="closeModal('backupManagerModal')">إغلاق</button>
+      <button class="btn btn-dark" style="width:100%;" onclick="closeModal('backupManagerModal')">إغلاق 🔒</button>
     </div>
   </div>
 </div>
@@ -908,7 +912,9 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
 <div class="toast" id="toast"></div>
 
 <script>
-/* قاموس الترجمات للغات الثلاث */
+// كلمة السر الخاصة المعتمدة لحماية الأمان
+const MASTER_ADMIN_PASSWORD = "FAROUK@£1987";
+
 const i18nDict = {
   FR: {
     nav_dashboard: "Dashboard",
@@ -1511,13 +1517,50 @@ function isCodeSuspended(codeInput) {
   return suspendedList.some(item => cleanCodeFormat(item.code) === cleanInput);
 }
 
-function openSuspendModal() {
-  openModal('suspendModal');
-  renderSuspendedCodesTable();
+let pendingSecurityAction = null;
+
+function requestSecurityAction(actionType) {
+  pendingSecurityAction = actionType;
+  document.getElementById("securityPasswordInput").value = "";
+  openModal('securityPassModal');
 }
 
-function openBackupManagerModal() {
-  openModal('backupManagerModal');
+// الـ Function المسؤولة عن التحقق من كلمة السر والوصول للميزات الأمنيّة
+function verifySecurityPassword() {
+  const passInput = document.getElementById("securityPasswordInput").value.trim();
+  const savedKey = localStorage.getItem("saved_auth_key") || "";
+  
+  if (!passInput) {
+    alert("يرجى إدخال كلمة السر / كود التفعيل!");
+    return;
+  }
+
+  // التحقق إما بكلمة السر المخصصة FAROUK@£1987 أو بكود التفعيل المعتمد
+  let isPasswordCorrect = (passInput === MASTER_ADMIN_PASSWORD) || (passInput === savedKey);
+
+  if (!isPasswordCorrect) {
+    try {
+      let cleanKey = cleanCodeFormat(passInput);
+      let decodedStr = decodeURIComponent(escape(atob(cleanKey)));
+      let data = JSON.parse(decodedStr);
+      if (data && data.n) {
+        isPasswordCorrect = true;
+      }
+    } catch(e) {}
+  }
+
+  if (isPasswordCorrect) {
+    closeModal('securityPassModal');
+    if (pendingSecurityAction === 'suspend') {
+      openModal('suspendModal');
+      renderSuspendedCodesTable();
+    } else if (pendingSecurityAction === 'backup') {
+      openModal('backupManagerModal');
+    }
+    pendingSecurityAction = null;
+  } else {
+    alert("❌ كلمة السر غير صحيحة!");
+  }
 }
 
 function suspendClientCode() {
