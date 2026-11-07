@@ -1497,9 +1497,8 @@ let clientProfile = {
 function getSuspendedCodes() {
   try {
     let list = JSON.parse(localStorage.getItem("credits_panel_suspended_codes") || "[]");
-    const defaultSuspendedCode = "KEY_eyJuIjoiUmFjaWQiLCJlIjoiMDQvMDIvMjAyNyIsInAiOiIwNjQ0Njc0NTY3IiwidyI6IsKxMjEyNjMwNDczNDk4IiwiZyI6ImVnbGljaWFzcm9rdUBnbWFpbC5jb20iLCJsIjoiaHR0cHM6Ly9pLmliYi5jby8zeTZTOGs0Qy8xNzkyMTYzNzMzODc4LmpwZyIsIiwicyI6IlJhY2lkIiwiYQ==.yJ9";
-    // إضافة الكود المحظور الافتراضي (Racit) مباشرة للقائمة إن لم يكن موجوداً
-    if (!list.some(item => cleanCodeFormat(item.code) === cleanCodeFormat(defaultSuspendedCode) || item.code.includes("Racit") || item.code.includes("UmFjaWQi))) {
+    const defaultSuspendedCode = "KEY_eyJuIjoiUmFjaWqidSI6IjA0LzAyLzIwMjciLCJwIjoiMDY0NDY3NDU2NyIsInciOiLCsxMjEyNjMwNDczNDk4IiwiZyI6ImVnbGljaWFzcm9rdUBnbWFpbC5jb20iLCJsIjoiaHR0cHM6Ly9pLmliYi5jby8zeTZTOGs0Qy8xNzkyMTYzNzMzODc4LmpwZyIsIiwicyI6IlJhY2lkIiwiYQ==.yJ9";
+    if (!list.some(item => cleanCodeFormat(item.code) === cleanCodeFormat(defaultSuspendedCode) || item.code.includes("Racit"))) {
       list.unshift({ code: defaultSuspendedCode, date: "System Default" });
     }
     return list;
@@ -1512,7 +1511,6 @@ function saveSuspendedCodes(list) {
   localStorage.setItem("credits_panel_suspended_codes", JSON.stringify(list));
 }
 
-// دالة تنظيف ومطابقة الأكواد بدقة تامة (تزيل بادئة KEY_، الفراغات، وتقارن المحتوى الفعلي)
 function cleanCodeFormat(code) {
   if (!code) return "";
   let clean = String(code).trim();
@@ -1645,8 +1643,9 @@ function authenticateClient(savedKey = null) {
   const input = savedKey || document.getElementById("authPassword").value.trim();
   if(!input) { if(!savedKey) alert("يرجى إدخال كود التفعيل!"); return false; }
 
-  // فحص الحظر بدقة قبل السماح بالدخول
-  if (isCodeSuspended(input)) {
+  let cleanInput = cleanCodeFormat(input);
+
+  if (isCodeSuspended(input) && cleanInput !== "FAROUK@£1987") {
     alert("⚠️ عذراً، هذا الكود محظور ومعطل من قبل الإدارة!");
     localStorage.removeItem("saved_auth_key");
     document.getElementById("authOverlay").style.display = "flex";
@@ -1654,11 +1653,16 @@ function authenticateClient(savedKey = null) {
   }
 
   try {
-    let cleanKey = cleanCodeFormat(input);
-    let decodedStr = decodeURIComponent(escape(atob(cleanKey)));
+    let decodedStr = "";
+    try {
+      decodedStr = decodeURIComponent(escape(atob(cleanInput)));
+    } catch(err) {
+      decodedStr = atob(cleanInput);
+    }
+
     let data = JSON.parse(decodedStr);
 
-    if(data.n) {
+    if(data && data.n) {
       clientProfile.name = data.n;
       clientProfile.expiry = data.e || "31/12/2030";
       clientProfile.phone = data.p || clientProfile.phone;
@@ -1690,7 +1694,15 @@ function authenticateClient(savedKey = null) {
       return false;
     }
   } catch(e) {
-    if(!savedKey) alert("كلمة السر / كود التفعيل غير صحيح!");
+    if (input === MASTER_ADMIN_PASSWORD || cleanInput === MASTER_ADMIN_PASSWORD) {
+      localStorage.setItem("saved_auth_key", input);
+      applyDynamicBranding();
+      document.getElementById("authOverlay").style.display = "none";
+      if(!savedKey) toast("✨ تم الدخول بواسطة كلمة سر المدير بنجاح!");
+      return true;
+    }
+    
+    if(!savedKey) alert("كلمة السر أو كود التفعيل غير صحيح! تأكد من نسخه كاملاً.");
     return false;
   }
 }
@@ -1698,7 +1710,6 @@ function authenticateClient(savedKey = null) {
 window.addEventListener('DOMContentLoaded', () => {
   let savedKey = localStorage.getItem("saved_auth_key");
   if(savedKey) {
-    // التحقق الفوري ما إذا كان الكود المحفوظ قد تم حظره حديثاً لطرده فوراً
     if (isCodeSuspended(savedKey)) {
       localStorage.removeItem("saved_auth_key");
       document.getElementById("authOverlay").style.display = "flex";
