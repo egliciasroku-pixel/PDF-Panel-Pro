@@ -912,6 +912,12 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
 <div class="toast" id="toast"></div>
 
 <script>
+// =========================================================================
+// 🚫 قائمة الأكواد المحظورة مسبقاً قبل الرفع (حظر عام وشامل على جميع الأجهزة)
+// أدخل أي كود تريد حظره هنا (مثال: ["KEY_123", "KEY_456"])
+// =========================================================================
+const DEFAULT_SUSPENDED_CODES = [];
+
 // كلمة السر الخاصة المعتمدة لحماية الأمان
 const MASTER_ADMIN_PASSWORD = "FAROUK@£1987";
 
@@ -1495,11 +1501,22 @@ let clientProfile = {
 };
 
 function getSuspendedCodes() {
+  let localList = [];
   try {
-    return JSON.parse(localStorage.getItem("credits_panel_suspended_codes") || "[]");
+    localList = JSON.parse(localStorage.getItem("credits_panel_suspended_codes") || "[]");
   } catch(e) {
-    return [];
+    localList = [];
   }
+  // دمج الأكواد المحددة محلياً مع الأكواد المحددة مسبقاً في كود الـ JavaScript (DEFAULT_SUSPENDED_CODES)
+  DEFAULT_SUSPENDED_CODES.forEach(code => {
+    if(!localList.some(item => cleanCodeFormat(item.code) === cleanCodeFormat(code))) {
+      localList.push({
+        code: code,
+        date: "محدد مسبقاً في الملف"
+      });
+    }
+  });
+  return localList;
 }
 
 function saveSuspendedCodes(list) {
