@@ -912,12 +912,6 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
 <div class="toast" id="toast"></div>
 
 <script>
-// =========================================================================
-// 🚫 قائمة الأكواد المحظورة مسبقاً قبل الرفع (حظر عام وشامل على جميع الأجهزة)
-// أدخل أي كود تريد حظره هنا (مثال: ["KEY_123", "KEY_456"])
-// =========================================================================
-const DEFAULT_SUSPENDED_CODES = [];
-
 // كلمة السر الخاصة المعتمدة لحماية الأمان
 const MASTER_ADMIN_PASSWORD = "FAROUK@£1987";
 
@@ -1501,22 +1495,17 @@ let clientProfile = {
 };
 
 function getSuspendedCodes() {
-  let localList = [];
   try {
-    localList = JSON.parse(localStorage.getItem("credits_panel_suspended_codes") || "[]");
-  } catch(e) {
-    localList = [];
-  }
-  // دمج الأكواد المحددة محلياً مع الأكواد المحددة مسبقاً في كود الـ JavaScript (DEFAULT_SUSPENDED_CODES)
-  DEFAULT_SUSPENDED_CODES.forEach(code => {
-    if(!localList.some(item => cleanCodeFormat(item.code) === cleanCodeFormat(code))) {
-      localList.push({
-        code: code,
-        date: "محدد مسبقاً في الملف"
-      });
+    let list = JSON.parse(localStorage.getItem("credits_panel_suspended_codes") || "[]");
+    // التأكد من إضافة كود "Racit" المحظور افتراضياً بناءً على طلبك
+    const defaultSuspendedCode = "KEY_eyJuIjoiUmFjaWQiLCJlIjoiMDQvMDIvMjAyNyIsInAiOiIwNjQ0Njc0NTY3IiwidyI6IsKxMjEyNjMwNDczNDk4IiwiZyI6ImVnbGljaWFzcm9rdUBnbWFpbC5jb20iLCJsIjoiaHR0cHM6Ly9pLmliYi5jby8zeTZTOGs0Qy8xNzkyMTYzNzMzODc4LmpwZyLessonsiOiJSYWNpZCIsImEiOiLYs9mE2Kct2KfZhNmI2KfYryJ9";
+    if (!list.some(item => cleanCodeFormat(item.code) === cleanCodeFormat(defaultSuspendedCode))) {
+      list.unshift({ code: defaultSuspendedCode, date: "System Default" });
     }
-  });
-  return localList;
+    return list;
+  } catch(e) {
+    return [];
+  }
 }
 
 function saveSuspendedCodes(list) {
