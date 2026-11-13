@@ -734,7 +734,59 @@ html[dir="rtl"] .sofiane-thank-banner { border-left: none; border-right: 3px sol
 </div>
 
 <!-- MODALS -->
-<div class="modal" id="clientModal"><div class="modal-box"><div class="modal-head"><h3 id="clientModalTitle" data-i18n="modal_client_title">Nouveau client</h3><button class="close" onclick="closeModal('clientModal')">×</button></div><div class="modal-body"><input type="hidden" id="editClientId"><div class="form-grid"><div class="form-group full"><label data-i18n="lbl_name_surname">Nom / Prénom</label><input class="input" id="clientName" placeholder="Nom du client"></div><div class="form-group"><label data-i18n="lbl_whatsapp">WhatsApp</label><input class="input" id="clientPhone" placeholder="+212 6XXXXXXXX"></div><div class="form-group"><label data-i18n="lbl_year">Année</label><input class="input" id="clientYear" value="2026"></div><div class="form-group full"><label data-i18n="lbl_username_account">Username / Compte</label><input class="input" id="clientAccount" placeholder="Username"></div></div></div><div class="modal-foot"><button class="btn btn-dark" onclick="closeModal('clientModal')" data-i18n="btn_cancel">Annuler</button><button class="btn btn-danger" id="deleteClientModalBtn" onclick="deleteCurrentClient()" style="display:none" data-i18n="btn_delete">Supprimer</button><button class="btn btn-lime" onclick="saveClient()" data-i18n="btn_save">Enregistrer</button></div></div></div>
+<div class="modal" id="clientModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="clientModalTitle" data-i18n="modal_client_title">Nouveau client</h3>
+      <button class="close" onclick="closeModal('clientModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editClientId">
+      <div class="form-grid">
+        <div class="form-group full"><label data-i18n="lbl_name_surname">Nom / Prénom</label><input class="input" id="clientName" placeholder="Nom du client"></div>
+        <div class="form-group"><label data-i18n="lbl_whatsapp">WhatsApp</label><input class="input" id="clientPhone" placeholder="+212 6XXXXXXXX"></div>
+        <div class="form-group"><label data-i18n="lbl_year">Année</label><input class="input" id="clientYear" value="2026"></div>
+        <div class="form-group full"><label data-i18n="lbl_username_account">Username / Compte</label><input class="input" id="clientAccount" placeholder="Username"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" onclick="closeModal('clientModal')" data-i18n="btn_cancel">Annuler</button>
+      <button class="btn btn-danger" id="deleteClientModalBtn" onclick="deleteCurrentClient()" style="display:none" data-i18n="btn_delete">Supprimer</button>
+      <button class="btn btn-lime" onclick="saveClient()" data-i18n="btn_save">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIT FINANCIALS -->
+<div class="modal" id="editFinancialModal">
+  <div class="modal-box" style="max-width:380px;">
+    <div class="modal-head">
+      <h3 style="color:var(--lime);">💰 تعديل الوضع المالي للعميل</h3>
+      <button class="close" onclick="closeModal('editFinancialModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editFinancialClientId">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>اسم العميل:</label>
+          <input class="input" id="editFinancialClientName" disabled style="background:#050a0b; color:var(--lime);">
+        </div>
+        <div class="form-group">
+          <label>إجمالي الديون / الفواتير (<span class="currLbl">DH</span>):</label>
+          <input class="input" type="number" step="any" id="editFinancialDue" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>إجمالي المبالغ المدفوعة (<span class="currLbl">DH</span>):</label>
+          <input class="input" type="number" step="any" id="editFinancialPaid" placeholder="0.00">
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" onclick="closeModal('editFinancialModal')">إغلاق</button>
+      <button class="btn btn-lime" onclick="saveFinancialEdit()">حفظ التعديلات المالية ⚡</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal" id="languageModal">
   <div class="modal-box" style="max-width:380px;">
@@ -1123,6 +1175,8 @@ function updateCurrencyLabels() {
   if(qBtn) qBtn.textContent = sym;
   const sLabel = document.getElementById("settingsCurrencyLabel");
   if(sLabel) sLabel.textContent = sym;
+
+  document.querySelectorAll(".currLbl").forEach(el => el.textContent = sym);
 
   document.getElementById("abonnementPriceLabel").textContent = `Prix (${sym})`;
   document.getElementById("activationPriceLabel").textContent = `Prix (${sym})`;
@@ -1819,7 +1873,7 @@ function renderClients(){
   body.innerHTML=list.map(c=>{ 
     const due=Number(c.totalDue||0); const paid=Number(c.totalPaid||0); const remain=Math.max(0,due-paid); 
     const status=clientStatus(c); 
-    return`<tr><td><div class="client-cell"><span class="avatar">${c.avatar?`<img src="${c.avatar}">`:escapeHtml(initials(c.name))}</span><strong>${escapeHtml(c.name)}</strong></div></td><td>${escapeHtml(c.account||"-")}</td><td><span class="badge badge-blue">${escapeHtml(c.year||currentYear())}</span></td><td><code>${escapeHtml(c.phone||"+212000000000")}</code></td><td>${money(due)}</td><td>${money(paid)}</td><td>${money(remain)}</td><td><span class="badge ${status.cls}">${status.text}</span></td><td><div class="actions"><button class="btn btn-dark btn-small" onclick="viewClient('${c.id}')">👁</button><button class="btn btn-blue btn-small" onclick="openDebtModal('${c.id}')">＋</button><button class="btn btn-lime btn-small" onclick="openPaymentModal('${c.id}')">💳</button><button class="btn btn-dark btn-small" onclick="editClient('${c.id}')">✎</button><button class="btn btn-dark btn-small" onclick="openClientInvoice('${c.id}')">🧾</button><button class="btn btn-danger btn-small" onclick="deleteClientDirect('${c.id}')">🗑</button></div></td></tr>`; 
+    return`<tr><td><div class="client-cell"><span class="avatar">${c.avatar?`<img src="${c.avatar}">`:escapeHtml(initials(c.name))}</span><strong>${escapeHtml(c.name)}</strong></div></td><td>${escapeHtml(c.account||"-")}</td><td><span class="badge badge-blue">${escapeHtml(c.year||currentYear())}</span></td><td><code>${escapeHtml(c.phone||"+212000000000")}</code></td><td>${money(due)}</td><td>${money(paid)}</td><td>${money(remain)}</td><td><span class="badge ${status.cls}">${status.text}</span></td><td><div class="actions"><button class="btn btn-dark btn-small" onclick="viewClient('${c.id}')">👁</button><button class="btn btn-blue btn-small" onclick="openDebtModal('${c.id}')">＋</button><button class="btn btn-lime btn-small" onclick="openPaymentModal('${c.id}')">💳</button><button class="btn btn-dark btn-small" onclick="editClient('${c.id}')" title="تعديل البيانات الأساسية">✎</button><button class="btn btn-orange btn-small" style="background:rgba(255,184,77,0.1); color:var(--orange);" onclick="openEditFinancialModal('${c.id}')" title="تعديل مالي">💱</button><button class="btn btn-dark btn-small" onclick="openClientInvoice('${c.id}')">🧾</button><button class="btn btn-danger btn-small" onclick="deleteClientDirect('${c.id}')">🗑</button></div></td></tr>`; 
   }).join(""); 
 } 
 
@@ -1863,6 +1917,38 @@ function saveClient(){
   } 
   saveData(); closeModal("clientModal"); renderAll(); 
 } 
+
+function openEditFinancialModal(clientId) {
+  const client = getClient(clientId);
+  if(!client) return;
+  document.getElementById("editFinancialClientId").value = client.id;
+  document.getElementById("editFinancialClientName").value = client.name;
+  document.getElementById("editFinancialDue").value = client.totalDue || 0;
+  document.getElementById("editFinancialPaid").value = client.totalPaid || 0;
+  openModal("editFinancialModal");
+}
+
+function saveFinancialEdit() {
+  const clientId = document.getElementById("editFinancialClientId").value;
+  const client = getClient(clientId);
+  if(!client) return;
+
+  const newDue = Number(document.getElementById("editFinancialDue").value);
+  const newPaid = Number(document.getElementById("editFinancialPaid").value);
+
+  if(isNaN(newDue) || isNaN(newPaid) || newDue < 0 || newPaid < 0) {
+    alert("يرجى إدخال قيم مالية صحيحة!");
+    return;
+  }
+
+  client.totalDue = newDue;
+  client.totalPaid = newPaid;
+
+  saveData();
+  closeModal("editFinancialModal");
+  renderAll();
+  toast("✨ تم تحديث الوضع المالي للعميل بنجاح");
+}
 
 function deleteClientDirect(id){
   const client=getClient(id); if(!client)return; 
@@ -2327,7 +2413,7 @@ function exportData(){
   const blob=new Blob([JSON.stringify({clients,payments,history:historyData,transactions,activations,abonnements, currency: activeCurrency, language: activeLanguage, suspendedCodes: getSuspendedCodes()},null,2)],{type:"application/json"}); 
   const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download="backup.json"; a.click(); 
   toast("📥 تم تصدير البيانات بنجاح");
-  closeModal('backupManagerModal');
+  closeModal('backupManagerManager');
 } 
 
 function handleFileImport(e) {
